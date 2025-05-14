@@ -31,4 +31,20 @@ public class Ray {
 
         return Objects.equals(point, ray.point) && dir.equals(ray.dir);
     }
+
+    /**
+     * Gets the starting point
+     * @return starting point of the ray
+     */
+    final public Point getP0() {
+        return point;
+    }
+
+    /**
+     * Gets the normalized direction vector
+     * @return normalized direction vector of the ray
+     */
+    final public Vector getDir() {
+        return dir;
+    }
 }

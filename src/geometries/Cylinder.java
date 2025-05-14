@@ -3,6 +3,9 @@ package geometries;
 import primitives.Ray;
 import primitives.Point;
 import primitives.Vector;
+
+import static primitives.Util.isZero;
+
 /**
  * Finite tube delimited by two planes
  */
@@ -28,12 +31,26 @@ public class Cylinder extends Tube{
     }
 
     /**
+     /**
+     * implementation {@link Geometry#getNormal(Point)}
      *
-     * @param point
+     * @param point point to calculate normal from/to
      * @return normal
      */
     @Override
     public Vector getNormal(Point point) {
+        Vector direction = _axisRay.getDir();
+        Point P0 = _axisRay.getP0();
+
+        //given point is on base of cylinder
+        if(point.equals(P0)||isZero(point.subtract(P0).dotProduct(direction)))
+            return direction.normalize();
+
+        // given point is on top base of the cylinder
+        if (point.equals(P0.add(direction.scale(height)))||isZero(point.subtract(P0.add(direction.scale(height))).dotProduct(direction)))
+            return direction.normalize();
+
+        // given point is on the circumference of cylinder
         return super.getNormal(point);
     }
 }

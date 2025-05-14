@@ -26,6 +26,11 @@ public class Plane extends Geometry {
         this.q0 = q0;
     }
 
+    /**
+     *
+     * @param point
+     * @return normal
+     */
     @Override
     public Vector getNormal(Point point) {
         return normal;
