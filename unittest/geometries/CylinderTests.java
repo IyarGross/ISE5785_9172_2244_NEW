@@ -25,4 +25,5 @@ class CylinderTests {
         // ============ Orthogonality Tests ==============
         assertTrue(isZero(normal.dotProduct(axisRay.getDir())), "Cylinder's normal is not orthogonal to the axis ray.");
     }
+
 }

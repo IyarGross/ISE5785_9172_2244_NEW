@@ -39,7 +39,10 @@ public class Ray {
     final public Point getP0() {
         return point;
     }
-
+    final public Point getPoint(double t) {
+        if (t<0) throw  (new IllegalArgumentException("getPoint must get a non negative value "));
+        return dir.scale(t).add((Vector) point);
+    }
     /**
      * Gets the normalized direction vector
      * @return normalized direction vector of the ray

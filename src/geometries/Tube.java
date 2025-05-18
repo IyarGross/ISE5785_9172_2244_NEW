@@ -4,6 +4,8 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import java.util.List;
+
 import static primitives.Util.isZero;
 
 public class Tube extends RadialGeometry {
@@ -56,5 +58,10 @@ public class Tube extends RadialGeometry {
             // any other point
         else
             return point.subtract(O).normalize();
+    }
+
+    @Override
+    public List<Point> findIntsersections(Ray ray) {
+        return List.of();
     }
 }
