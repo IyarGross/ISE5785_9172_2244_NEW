@@ -12,6 +12,7 @@ public abstract class RadialGeometry extends Geometry {
     /**
      * Constructor of the abstract radial geometry class
      * Represents any radial geometry by saving its radius
+     *
      * @param radius the radial shape radius
      */
     public RadialGeometry(double radius) {

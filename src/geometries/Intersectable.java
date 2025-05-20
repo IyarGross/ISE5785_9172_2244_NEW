@@ -1,11 +1,23 @@
 package geometries;
-import java.util.*;
-import primitives.*;
-/*
- * interface for geometries that should provide the method findIntersection for all the forms
- * all the information about the implementation of this method you may find on https://moodle.jct.ac.il/pluginfile.php/987458/mod_resource/content/46/4%20-%20ISE.pdf
- * */
+
+import primitives.Point;
+import primitives.Ray;
+
+import java.util.List;
+
+/**
+ * Interface for geometric shapes that can be intersected by rays.
+ * Classes implementing this interface must provide an implementation of the
+ * method {@link #findIntersections(Ray)} to find intersection points between
+ * the shape and a given ray.
+ */
 public interface Intersectable {
-    List<Point> findIntsersections(Ray ray);
+    /**
+     * Finds all intersection points between the geometry and the given ray.
+     *
+     * @param ray the ray to intersect with the geometry
+     * @return a list of intersection points, or {@code null} if no intersections exist
+     */
+    List<Point> findIntersections(Ray ray);
 
 }

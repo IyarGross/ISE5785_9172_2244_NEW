@@ -1,10 +1,13 @@
 package geometries;
-import primitives.Point;
-import primitives.Vector;
-import primitives.Ray;
+
 import org.junit.jupiter.api.Test;
+import primitives.Point;
+import primitives.Ray;
+import primitives.Vector;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static primitives.Util.isZero;
-import static org.junit.jupiter.api.Assertions.*;
 
 class TubeTests {
     /**

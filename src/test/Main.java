@@ -1,35 +1,55 @@
 package test;
+
+import primitives.Double3;
+import primitives.Point;
+import primitives.Vector;
+
 import static java.lang.System.out;
-
 import static primitives.Util.isZero;
-
-import primitives.*;
 
 /**
  * Test program for the 1st stage
+ *
  * @author Dan Zilberstein
  */
 public final class Main {
-    /** A point for tests at (1,2,3) */
-    private static final Point  P1          = new Point(1, 2, 3);
-    /** A point for tests at (2,4,6) */
-    private static final Point  P2          = new Point(2, 4, 6);
-    /** A point for tests at (2,4,5) */
-    private static final Point  P3          = new Point(2, 4, 5);
+    /**
+     * A point for tests at (1,2,3)
+     */
+    private static final Point P1 = new Point(1, 2, 3);
+    /**
+     * A point for tests at (2,4,6)
+     */
+    private static final Point P2 = new Point(2, 4, 6);
+    /**
+     * A point for tests at (2,4,5)
+     */
+    private static final Point P3 = new Point(2, 4, 5);
 
-    /** A vector for tests to (1,2,3) */
-    private static final Vector V1          = new Vector(1, 2, 3);
-    /** A vector for tests to (-1,-2,-3) (opposite to V1) */
+    /**
+     * A vector for tests to (1,2,3)
+     */
+    private static final Vector V1 = new Vector(1, 2, 3);
+    /**
+     * A vector for tests to (-1,-2,-3) (opposite to V1)
+     */
     private static final Vector V1_OPPOSITE = new Vector(-1, -2, -3);
-    /** A vector for tests to (-2,-4,-6) */
-    private static final Vector V2          = new Vector(-2, -4, -6);
-    /** A vector for tests to (0,3,-2) */
-    private static final Vector V3          = new Vector(0, 3, -2);
-    /** A vector for tests to (1,2,2) */
-    private static final Vector V4          = new Vector(1, 2, 2);
+    /**
+     * A vector for tests to (-2,-4,-6)
+     */
+    private static final Vector V2 = new Vector(-2, -4, -6);
+    /**
+     * A vector for tests to (0,3,-2)
+     */
+    private static final Vector V3 = new Vector(0, 3, -2);
+    /**
+     * A vector for tests to (1,2,2)
+     */
+    private static final Vector V4 = new Vector(1, 2, 2);
 
     /**
      * Main program to tests initial functionality of the 1st stage
+     *
      * @param args irrelevant here
      */
     public static void main(String[] args) {
@@ -49,7 +69,8 @@ public final class Main {
         try {
             P1.subtract(P1);
             out.println("ERROR: (point - itself) does not throw an exception");
-        } catch (IllegalArgumentException ignore) {} catch (Exception ignore) {
+        } catch (IllegalArgumentException ignore) {
+        } catch (Exception ignore) {
             out.println("ERROR: (point - itself) throws wrong exception");
         }
 
@@ -84,7 +105,8 @@ public final class Main {
             new Vector(0, 0, 0);
             new Vector(Double3.ZERO);
             out.println("ERROR: zero vector does not throw an exception");
-        } catch (IllegalArgumentException ignore) {} catch (Exception ignore) {
+        } catch (IllegalArgumentException ignore) {
+        } catch (Exception ignore) {
             out.println("ERROR: zero vector throws wrong exception");
         }
 
@@ -102,7 +124,8 @@ public final class Main {
         try { // test that the vectors are co-lined
             v.crossProduct(u);
             out.println("ERROR: the normalized vector is not parallel to the original one");
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         if (v.dotProduct(u) < 0)
             out.println("ERROR: the normalized vector is opposite to the original one");
     }
@@ -115,13 +138,15 @@ public final class Main {
         try {
             V1.add(V1_OPPOSITE);
             out.println("ERROR: Vector + -itself does not throw an exception");
-        } catch (IllegalArgumentException ignore) {} catch (Exception ignore) {
+        } catch (IllegalArgumentException ignore) {
+        } catch (Exception ignore) {
             out.println("ERROR: Vector + itself throws wrong exception");
         }
         try {
             V1.subtract(V1);
             out.println("ERROR: Vector - itself does not throw an exception");
-        } catch (IllegalArgumentException ignore) {} catch (Exception ignore) {
+        } catch (IllegalArgumentException ignore) {
+        } catch (Exception ignore) {
             out.println("ERROR: Vector + itself throws wrong exception");
         }
         if (!V1.add(V2).equals(V1_OPPOSITE))
@@ -139,7 +164,8 @@ public final class Main {
         try { // test zero vector
             V1.crossProduct(V2);
             out.println("ERROR: crossProduct() for parallel vectors does not throw an exception");
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         Vector vr = V1.crossProduct(V3);
         if (!isZero(vr.length() - V1.length() * V3.length()))
             out.println("ERROR: crossProduct() wrong result length");
