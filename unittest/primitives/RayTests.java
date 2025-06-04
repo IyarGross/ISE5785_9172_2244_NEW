@@ -1,8 +1,7 @@
 package primitives;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 class RayTests {
 
@@ -36,9 +35,7 @@ class RayTests {
     void testGetPointZero() {
         // =============== Boundary Values Tests ==================
         Ray ray = new Ray(new Point(1, 2, 3), new Vector(1, 0, 0));
-        assertDoesNotThrow(() -> ray.getPoint(0.0));
-        Point result = ray.getPoint(0.0);
-        Point expected = new Point(1, 2, 3);
-        assertEquals(expected, result, "ERROR: Zero distance should return the original point");
+        assertThrows(IllegalArgumentException.class, () -> ray.getPoint(0.0),
+                "ERROR: getPoint(0) should throw exception for zero vector");
     }
 }

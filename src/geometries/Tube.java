@@ -7,6 +7,7 @@ import primitives.Vector;
 import java.util.List;
 
 import static primitives.Util.isZero;
+
 /**
  * Tube class represents an infinite tube (cylindrical surface) in 3D space.
  * It extends RadialGeometry, so it has a radius and an axis represented by a Ray.
@@ -35,18 +36,19 @@ public class Tube extends RadialGeometry {
         _axisRay = axisRay;
         _radius = radius;
     }
+
     /**
      * Calculates the normal vector to the tube surface at a given point.
-     *
+     * <p>
      * Explanation:
      * - Project the vector from the axis ray's origin (P0) to the given point onto the axis ray direction.
      * - The projection scalar t is the dot product of the axis direction and the vector from P0 to the point.
      * - Compute point O on the axis ray corresponding to this projection:
-     *   If t == 0 (using isZero utility), O = P0 (base point).
-     *   Else, O = P0 + t * direction.
+     * If t == 0 (using isZero utility), O = P0 (base point).
+     * Else, O = P0 + t * direction.
      * - The normal vector is then the vector from O to the given point, normalized.
      * - If the given point lies exactly on the axis ray (point.equals(O)), throw IllegalArgumentException,
-     *   since a tube's surface normal is undefined on the axis.
+     * since a tube's surface normal is undefined on the axis.
      *
      * @param point point on the tube surface
      * @return normalized normal vector at the given point
@@ -73,7 +75,7 @@ public class Tube extends RadialGeometry {
 
     /**
      * Finds the intersection points of a given ray with the tube.
-     *
+     * <p>
      * Note:
      * This method currently returns an empty list, meaning no intersections are calculated yet.
      * Proper implementation should compute intersections between the ray and the tube surface.
@@ -83,6 +85,6 @@ public class Tube extends RadialGeometry {
      */
     @Override
     public List<Point> findIntersections(Ray ray) {
-        return List.of();
+        return null;
     }
 }

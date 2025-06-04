@@ -22,6 +22,7 @@ public class Triangle extends Polygon {
         if (vertices.length != 3)
             throw (new IllegalArgumentException("ERROR - triangle must get exactly three points"));
     }
+
     /**
      * Returns the normal vector to the triangle at a given point.
      * Delegates to the Polygon class's getNormal method.
@@ -33,20 +34,21 @@ public class Triangle extends Polygon {
     public Vector getNormal(Point point) {
         return super.getNormal(point);
     }
+
     /**
      * Finds the intersection points of a given ray with the triangle.
-     *
+     * <p>
      * Explanation:
      * - First, find the intersection points of the ray with the plane containing the triangle.
      * - If no intersection with the plane, return null.
      * - Otherwise, get the intersection point p on the plane.
      * - Use the inside-outside test for triangles:
-     *   For each edge of the triangle, compute the vector from the edge to the point p,
-     *   then compute the cross product with the edge vector.
-     *   Check the sign of the dot product of these cross products to determine if p lies inside the triangle.
+     * For each edge of the triangle, compute the vector from the edge to the point p,
+     * then compute the cross product with the edge vector.
+     * Check the sign of the dot product of these cross products to determine if p lies inside the triangle.
      * - If point is inside all three edges, return the intersection point list.
      * - Otherwise, return null (the intersection is outside the triangle).
-     *
+     * <p>
      * The method catches IllegalArgumentException which might occur at boundary cases and returns null.
      *
      * @param ray the ray to intersect with the triangle

@@ -6,7 +6,7 @@ import static java.lang.Math.sqrt;
  * Point class represents a point in the 3D Cartesian coordinate system.
  */
 public class Point {
-    public static Point ZERO = new Point(0, 0, 0);
+    public static Point ZERO = new Point(Double3.ZERO);
     /**
      * The coordinates of the point, represented by a Double3 object.
      */
@@ -82,11 +82,14 @@ public class Point {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof Point)) {
-            return false;
-        }
-        return xyz.equals(((Point) obj).xyz);
+        if (!(obj instanceof Point)) return false;
+        Point other = (Point) obj;
+        return Util.isZero(this.xyz.d1() - other.xyz.d1()) &&
+                Util.isZero(this.xyz.d2() - other.xyz.d2()) &&
+                Util.isZero(this.xyz.d3() - other.xyz.d3());
     }
+
+
     /**
      * Returns a string representation of the point.
      *
@@ -96,4 +99,16 @@ public class Point {
     public String toString() {
         return xyz.toString();
     }
+
+
+    public Double3 getXYZ() {
+        return xyz;
+    }
+    public boolean equalsWithEpsilon(Point other, double epsilon) {
+        if (other == null) return false;
+        return Math.abs(this.xyz.d1() - other.xyz.d1()) < epsilon
+                && Math.abs(this.xyz.d2() - other.xyz.d2()) < epsilon
+                && Math.abs(this.xyz.d3() - other.xyz.d3()) < epsilon;
+    }
+
 }

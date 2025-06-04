@@ -2,7 +2,6 @@ package primitives;
 
 import org.junit.jupiter.api.Test;
 
-import static java.lang.Math.sqrt;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PointTests {

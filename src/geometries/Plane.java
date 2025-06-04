@@ -14,6 +14,7 @@ import java.util.List;
 public class Plane extends Geometry {
     protected final Point p0;
     protected final Vector normal;
+
     /**
      * Constructs a plane based on three points in space.
      * The plane is defined by the points p1, p2, p3.

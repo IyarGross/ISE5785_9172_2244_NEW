@@ -1,6 +1,7 @@
 package primitives;
 
 import static java.lang.Math.sqrt;
+import static primitives.Util.isZero;
 
 /**
  * Vector construction by three points in the 3D Cartesian coordinate
@@ -100,4 +101,22 @@ public class Vector extends Point {
         if (!(obj instanceof Vector other)) return false;//if the type isnt vector
         return super.equals((Point) obj);
     }
+    /** Constant vector in direction of X axis */
+    public static final Vector AXIS_X = new Vector(1, 0, 0);
+
+    /** Constant vector in direction of Y axis */
+    public static final Vector AXIS_Y = new Vector(0, 1, 0);
+
+    /** Constant vector in direction of Z axis */
+    public static final Vector AXIS_Z = new Vector(0, 0, 1);
+    public boolean equalsWithEpsilon(Vector other, double epsilon) {
+        if (other == null) return false;
+        return Math.abs(this.xyz.d1() - other.xyz.d1()) < epsilon
+                && Math.abs(this.xyz.d2() - other.xyz.d2()) < epsilon
+                && Math.abs(this.xyz.d3() - other.xyz.d3()) < epsilon;
+    }
+    public boolean isOrthogonalTo(Vector other) {
+        return isZero(this.dotProduct(other));
+    }
+
 }

@@ -12,29 +12,34 @@ import java.util.List;
  */
 public class Geometries implements Intersectable {
     // List holding all the geometrical shapes in the collection
-    private List<Intersectable> geometriesList;
+    private List<Intersectable> geometries;
+
     /**
      * Default constructor, creates an empty collection of geometries
      */
     public Geometries() {
-        geometriesList = new ArrayList<Intersectable>();
+        geometries = new ArrayList<Intersectable>();
     }
+
     /**
      * Constructor that initializes the collection with one or more geometries
      *
      * @param geometries one or more geometries to add to the collection
      */
     public Geometries(Intersectable... geometries) {
-        geometriesList = new ArrayList<>(List.of(geometries));
+
+        this.geometries = new ArrayList<>(List.of(geometries));
     }
+
     /**
      * Adds one or more geometries to the collection
      *
      * @param geometries geometries to be added
      */
     public void add(Intersectable... geometries) {
-        geometriesList.addAll(List.of(geometries));
+        this.geometries.addAll(List.of(geometries));
     }
+
     /**
      * Implements {@link Intersectable#findIntersections(Ray)}.
      * Finds all intersection points between a ray and all geometries in the collection.
@@ -47,7 +52,7 @@ public class Geometries implements Intersectable {
         // List to collect all intersection points
         List<Point> result = new ArrayList<>();
         // Iterate over each geometry in the collection
-        for (Intersectable geometry : geometriesList) {
+        for (Intersectable geometry : geometries) {
             // Find intersections of the current geometry with the ray
             List<Point> intersections = geometry.findIntersections(ray);
             // Find intersections of the current geometry with the ray
@@ -59,4 +64,4 @@ public class Geometries implements Intersectable {
         return result.isEmpty() ? null : result;
     }
 
-    }
+}

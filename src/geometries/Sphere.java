@@ -27,6 +27,7 @@ public class Sphere extends RadialGeometry {
         super(radius);
         this.center = center;
     }
+
     /**
      * Returns the normal vector to the sphere at a given point on its surface.
      * The normal is the vector from the center of the sphere to the given point, normalized.
@@ -38,9 +39,10 @@ public class Sphere extends RadialGeometry {
     public Vector getNormal(Point point) {
         return point.subtract(center).normalize();
     }
+
     /**
      * Finds the intersection points of the sphere with the given ray.
-     *
+     * <p>
      * Algorithm explanation:
      * - If ray origin equals the center, return the point at radius distance along the ray direction.
      * - Calculate vector u from ray origin to sphere center.

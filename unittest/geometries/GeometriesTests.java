@@ -5,8 +5,7 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class GeometriesTest {
 
@@ -27,10 +26,8 @@ class GeometriesTest {
                 "TwoDGeometries findintersection doesnt work"
         );
         // =============== empty list Boundary Value Test ==================
-        assertTrue(
-                new Geometries().findIntersections(new Ray(new Point(3.48912607502429, 2.492278904234482, 0), new Vector(-4.771313818529334, -2.5410518459516, 3.328440304229791))) == null,
-                "TwoDGeometries findintersection doesnt work"
-        );
+        assertNull(new Geometries().findIntersections(new Ray(new Point(3.48912607502429, 2.492278904234482, 0), new Vector(-4.771313818529334, -2.5410518459516, 3.328440304229791))),
+                "TwoDGeometries findintersection doesnt work");
         // =============== no form is intersect list Boundary Value Test ==================
         geometries = new Geometries(new Plane(new Point(2, 0, 0), new Point(0, -2, 0), new Point(0, -1, 0)),
                 new Sphere(1, new Point(2, 0, 0)),

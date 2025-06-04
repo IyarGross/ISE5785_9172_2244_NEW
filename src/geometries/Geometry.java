@@ -5,6 +5,7 @@ import primitives.Ray;
 import primitives.Vector;
 
 import java.util.List;
+
 /**
  * Abstract base class for all geometric objects that are able to be intersected with a ray
  * and able to provide a normal vector at a given point on their surface.
@@ -18,6 +19,7 @@ public abstract class Geometry implements Intersectable {
      * @return the normal vector
      */
     public abstract Vector getNormal(Point point);
+
     /**
      * Finds the intersection points of a ray with the geometry.
      * This method overrides the one from {@link Intersectable}.

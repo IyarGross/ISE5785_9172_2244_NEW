@@ -84,8 +84,11 @@ public record Double3(double d1, double d2, double d3) {
      * @return result of scale
      */
     public Double3 scale(double rhs) {
+        if (rhs == 0)
+            throw new IllegalArgumentException("Scaling by zero creates a zero vector, which is not allowed");
         return new Double3(d1 * rhs, d2 * rhs, d3 * rhs);
     }
+
 
     /**
      * Reduce (divide) floating point triad by a number into a new triad where each
