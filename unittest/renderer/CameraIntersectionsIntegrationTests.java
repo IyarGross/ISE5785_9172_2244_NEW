@@ -23,6 +23,7 @@ public class CameraIntersectionsIntegrationTests {
             .setVpDistance(1);
 
     Camera camera1 = cameraBuilder.setVpSize(6, 6).build();
+
     /**
      * Test method for the integration between camera and sphere
      */
@@ -63,6 +64,7 @@ public class CameraIntersectionsIntegrationTests {
                 "ERROR: wrong intersection points when:" +
                         " small sphere with radius=0.5 all the sphere is behind the camera (0 points)");
     }
+
     /**
      * Test method for the integration between camera and plane
      */

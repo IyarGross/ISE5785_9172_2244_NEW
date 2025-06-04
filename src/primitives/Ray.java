@@ -1,5 +1,6 @@
 package primitives;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -8,11 +9,13 @@ import java.util.Objects;
 public class Ray {
     final private Point point;
     final private Vector dir;
+
     /**
      * Ray construction is made from a start point and a direction vector
      * The normalized direction vector is being saved
+     *
      * @param point starting point
-     * @param dir direction of the ray
+     * @param dir   direction of the ray
      */
     public Ray(Point point, Vector dir) {
         this.point = point;
@@ -31,6 +34,7 @@ public class Ray {
 
         return Objects.equals(point, ray.point) && dir.equals(ray.dir);
     }
+
     /**
      * Calculates a point on the line of the ray, at a distance t
      *
@@ -45,22 +49,44 @@ public class Ray {
 
     /**
      * Gets the normalized direction vector
+     *
      * @return normalized direction vector of the ray
      */
     final public Vector getDir() {
         return dir;
     }
+
     /**
      * Gets the starting point
+     *
      * @return starting point of the ray
      */
     final public Point getP0() {
         return point;
     }
+
     public boolean equalsWithEpsilon(Ray other, double epsilon) {
         if (other == null) return false;
         return this.getP0().equalsWithEpsilon(other.getP0(), epsilon)
                 && this.dir.equalsWithEpsilon(other.dir, epsilon);
     }
 
+    /**
+     * @param points the list of point that i check who is the closest to the head of the ray
+     * @return the point that is the closest to the head of the ray
+     */
+    public Point findClosestPoint(List<Point> points) {
+        if (points.isEmpty())
+            return null;
+        double minDistance = point.distance(points.getFirst());
+        Point minPoint = points.getFirst();
+        for (Point po : points) {
+            double pointDistance = point.distance(po);
+            if (pointDistance < minDistance) {
+                minPoint = po;
+                minDistance = pointDistance;
+            }
+        }
+        return minPoint;
+    }
 }

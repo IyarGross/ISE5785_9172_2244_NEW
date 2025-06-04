@@ -104,6 +104,7 @@ public class Point {
     public Double3 getXYZ() {
         return xyz;
     }
+
     public boolean equalsWithEpsilon(Point other, double epsilon) {
         if (other == null) return false;
         return Math.abs(this.xyz.d1() - other.xyz.d1()) < epsilon
