@@ -1,13 +1,14 @@
 package renderer;
 
-import primitives.Color;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
+
+import primitives.Color;
 
 /**
  * Image writer class combines accumulation of pixel color matrix and finally
@@ -17,20 +18,22 @@ import java.util.logging.Logger;
  *
  * @author Dan
  */
-final class ImageWriter {
+public class ImageWriter {
+    /**
+     * Horizontal resolution of the image - number of pixels in row
+     */
+    private int nX;
+    /**
+     * Vertical resolution of the image - number of pixels in column
+     */
+    private int nY;
+
     /**
      * Directory path for the image file generation - relative to the user
      * directory
      */
     private static final String FOLDER_PATH = System.getProperty("user.dir") + "/images";
-    /**
-     * Horizontal resolution of the image - number of pixels in row
-     */
-    private final int nX;
-    /**
-     * Vertical resolution of the image - number of pixels in column
-     */
-    private final int nY;
+
     /**
      * Image generation buffer (the matrix of the pixels)
      */
@@ -61,20 +64,14 @@ final class ImageWriter {
         image = new BufferedImage(nX, nY, BufferedImage.TYPE_INT_RGB);
     }
 
-    public ImageWriter(int nX, int nY) {
-        this.nX = nX;
-        this.nY = nY;
-        image = new BufferedImage(nX, nY, BufferedImage.TYPE_INT_RGB);
-    }
-
-    // ***************** Getters ********************** //
+    // ***************** Getters/Setters ********************** //
 
     /**
      * View Plane Y axis resolution
      *
      * @return the amount of vertical pixels
      */
-    int getnY() {
+    public int getNy() {
         return nY;
     }
 
@@ -83,37 +80,8 @@ final class ImageWriter {
      *
      * @return the amount of horizontal pixels
      */
-    int getnX() {
+    public int getNx() {
         return nX;
-    }
-
-    // ***************** Operations ******************** //
-
-    /**
-     * Function writeToImage produces unoptimized png file of the image according
-     * to pixel color matrix in the directory of the project
-     *
-     * @param imageName the name of png file
-     */
-    void writeToImage(String imageName) {
-        try {
-            File file = new File(FOLDER_PATH + '/' + imageName + ".png");
-            ImageIO.write(image, "png", file);
-        } catch (IOException e) {
-            throw new IllegalStateException("I/O error - may be missing directory " + FOLDER_PATH, e);
-        }
-    }
-
-    /**
-     * The function writePixel writes a color of a specific pixel into pixel color
-     * matrix
-     *
-     * @param xIndex X axis index of the pixel
-     * @param yIndex Y axis index of the pixel
-     * @param color  final color of the pixel
-     */
-    void writePixel(int xIndex, int yIndex, Color color) {
-        image.setRGB(xIndex, yIndex, color.getColor().getRGB());
     }
 
     // ***************** Operations ******************** //
@@ -132,4 +100,18 @@ final class ImageWriter {
             throw new IllegalStateException("I/O error - may be missing directory " + FOLDER_PATH, e);
         }
     }
+
+    /**
+     * The function writePixel writes a color of a specific pixel into pixel color
+     * matrix
+     *
+     * @param xIndex X axis index of the pixel
+     * @param yIndex Y axis index of the pixel
+     * @param color  final color of the pixel
+     */
+    public void writePixel(int xIndex, int yIndex, Color color) {
+        image.setRGB(xIndex, yIndex, color.getColor().getRGB());
+    }
+
 }
+

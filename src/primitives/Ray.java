@@ -1,92 +1,81 @@
 package primitives;
 
 import java.util.List;
-import java.util.Objects;
+
+import static primitives.Util.alignZero;
 
 /**
- * Ray class represents a ray (=vector that starts from a specific point) in 3D Cartesian coordinates
+ * Class Ray is the basic class representing a ray in the 3D space
  */
 public class Ray {
-    final private Point point;
-    final private Vector dir;
+    private final Point head;
+    private final Vector direction;
+
 
     /**
-     * Ray construction is made from a start point and a direction vector
-     * The normalized direction vector is being saved
-     *
-     * @param point starting point
-     * @param dir   direction of the ray
+     * Constructor to initialize a ray based on a head point and a direction vector
+     * @param head head point
+     * @param direction direction vector
      */
-    public Ray(Point point, Vector dir) {
-        this.point = point;
-        this.dir = dir.normalize();
+    public Ray(Point head, Vector direction) {
+        this.head = head;
+        this.direction = direction.normalize();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        return obj instanceof Ray other
+                && head.equals(other.head)
+                && direction.equals(other.direction);
+    }
+
+    /**
+     * Getter for the point on the ray at a certain distance from the head
+     * @param t the distance from the head
+     * @return the point on the ray at the distance t from the head
+     */
+    public Point getPoint(double t) {
+        // if t is zero, return the head point
+        if(Util.isZero(t))
+            return head;
+        return head.add(direction.scale(t));
+    }
+
+    /**
+     * Getter for the head point of the ray
+     * @return the head point of the ray
+     */
+    public Vector getDirection() {
+        return direction;
+    }
+
+    public Point getHead() {
+        return head;
     }
 
     @Override
     public String toString() {
-        return null;
+        return "" + head + direction;
     }
-
-    @Override
-    public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Ray ray)) return false;
-
-        return Objects.equals(point, ray.point) && dir.equals(ray.dir);
-    }
-
     /**
-     * Calculates a point on the line of the ray, at a distance t
+     * find the closest point to ray's head
      *
-     * @param t the distance between the calculated point and the ray's head
+     * @return the closest Point
      */
-    public Point getPoint(double t) {
-        if (t < 0) {
-            throw new IllegalArgumentException("Distance cannot be negative");
-        }
-        return getP0().add(dir.scale(t));
-    }
-
-    /**
-     * Gets the normalized direction vector
-     *
-     * @return normalized direction vector of the ray
-     */
-    final public Vector getDir() {
-        return dir;
-    }
-
-    /**
-     * Gets the starting point
-     *
-     * @return starting point of the ray
-     */
-    final public Point getP0() {
-        return point;
-    }
-
-    public boolean equalsWithEpsilon(Ray other, double epsilon) {
-        if (other == null) return false;
-        return this.getP0().equalsWithEpsilon(other.getP0(), epsilon)
-                && this.dir.equalsWithEpsilon(other.dir, epsilon);
-    }
-
-    /**
-     * @param points the list of point that i check who is the closest to the head of the ray
-     * @return the point that is the closest to the head of the ray
-     */
-    public Point findClosestPoint(List<Point> points) {
-        if (points.isEmpty())
+    public Point findClosestPoint(List<Point> list) {
+        if (list == null)
             return null;
-        double minDistance = point.distance(points.getFirst());
-        Point minPoint = points.getFirst();
-        for (Point po : points) {
-            double pointDistance = point.distance(po);
-            if (pointDistance < minDistance) {
-                minPoint = po;
-                minDistance = pointDistance;
+
+        double distance = Double.POSITIVE_INFINITY;
+        Point closest = null;
+        for (Point point : list)    //find the closest point
+            if (alignZero(point.distance(head)) < distance) {
+                distance = point.distance(head);
+                closest = point;
             }
-        }
-        return minPoint;
+        return closest;
     }
 }
+
+

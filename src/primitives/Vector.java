@@ -1,129 +1,121 @@
+//vector.java
 package primitives;
 
-import static java.lang.Math.sqrt;
-import static primitives.Util.isZero;
-
 /**
- * Vector construction by three points in the 3D Cartesian coordinate
+ * This class will serve most primitive classes by representing a vector
  */
 public class Vector extends Point {
-    /**
-     * Constant vector in direction of X axis
-     */
+    // Unit vectors in X, Y, and Z directions
     public static final Vector AXIS_X = new Vector(1, 0, 0);
-    /**
-     * Constant vector in direction of Y axis
-     */
     public static final Vector AXIS_Y = new Vector(0, 1, 0);
-    /**
-     * Constant vector in direction of Z axis
-     */
     public static final Vector AXIS_Z = new Vector(0, 0, 1);
-
     /**
-     * Vector construction by three points in the 3D Cartesian coordinate
+     * Constructor to initialize vector based object with its three number values
      *
-     * @param x x coordinate
-     * @param y y coordinate
-     * @param z z coordinate
+     * @param x first number value
+     * @param y second number value
+     * @param z third number value
      */
     public Vector(double x, double y, double z) {
         super(x, y, z);
-        if (xyz.equals(Double3.ZERO)) throw new IllegalArgumentException("Zero Vector can not be accepted");
+        //Vector temp = new Vector(Double3.ZERO);
+        if (xyz.equals(Double3.ZERO))
+            throw new IllegalArgumentException("Vector can't be zero");
     }
 
     /**
-     * Vector constructions by the Double3 constructor
+     * Constructor to initialize vector based object with a point
      *
-     * @param xyz point of the end of the vector while the start is at zero point
+     * @param xyz the point for the initialization
      */
     public Vector(Double3 xyz) {
         super(xyz);
-        if (xyz.equals(Double3.ZERO)) throw new IllegalArgumentException("Zero Vector can not be tolerate");
+        if (this.xyz.equals(Double3.ZERO))
+            throw new IllegalArgumentException("Vector can't be zero");
     }
 
     /**
-     * Vector addition
+     * calculate the length Squared of ש vector
      *
-     * @param v vector to add
-     * @return new vector of sum of vectors
+     * @return result the calculation of the length Squared
      */
-    final public Vector add(Vector v) {
-        return new Vector(this.xyz.add(v.xyz));
+    public double lengthSquared() {
+        return xyz.d1 * xyz.d1 + xyz.d2 * xyz.d2 + xyz.d3 * xyz.d3;
+
     }
 
     /**
-     * @param m multiplier
-     * @return new scaled vector
-     */
-    final public Vector scale(double m) {
-        return new Vector(this.xyz.scale(m));
-    }
-
-    /**
-     * Calculates dot product of two vectors
+     * calculate the length of the vector
      *
-     * @param v vector to multiply with
-     * @return the dot product of two vectors
+     * @return result the calculation of the length
      */
-    final public double dotProduct(Vector v) {
-        return this.xyz.d1() * v.xyz.d1() + this.xyz.d2() * v.xyz.d2() + this.xyz.d3() * v.xyz.d3();
+    public double length() {
+        return Math.sqrt(lengthSquared());
+
     }
 
     /**
-     * Calculates cross product of two vectors
+     * calculate the dot product of the two vectors
      *
-     * @param v vector to multiply with
-     * @return the cross product of two vectors
+     * @param v the second vector
+     * @return result the calculation of the dot product-int
      */
-    final public Vector crossProduct(Vector v) {
-        return new Vector(this.xyz.d2() * v.xyz.d3() - this.xyz.d3() * v.xyz.d2(), this.xyz.d3() * v.xyz.d1() - this.xyz.d1() * v.xyz.d3(), this.xyz.d1() * v.xyz.d2() - this.xyz.d2() * v.xyz.d1());
-        //calculate the cross product by this formula
+    public double dotProduct(Vector v) {
+        return xyz.d1 * v.xyz.d1 + xyz.d2 * v.xyz.d2 + xyz.d3 * v.xyz.d3;
     }
 
     /**
-     * Calculates the squared length of the vector
+     * calculate the cross product of the two vectors
      *
-     * @return squared length of the vector
+     * @param v the second vector
+     * @return A new vector perpendicular to the two existing vectors
      */
-    final public double lengthSquared() {
-        return this.xyz.d1() * this.xyz.d1() + this.xyz.d3() * this.xyz.d3() + this.xyz.d2() * this.xyz.d2();
+    public Vector crossProduct(Vector v) {
+        return new Vector(xyz.d2 * v.xyz.d3 - xyz.d3 * v.xyz.d2, xyz.d3 * v.xyz.d1 - xyz.d1 * v.xyz.d3, xyz.d1 * v.xyz.d2 - xyz.d2 * v.xyz.d1);
     }
 
     /**
-     * Calculates the length of the vector
+     * calculate the normalization of the vector
      *
-     * @return length of vector
+     * @return the vector after normalization
      */
-    final public double length() {
-        return sqrt(lengthSquared());
+    public Vector normalize() {
+        return this.scale((1 / this.length()));
     }
 
     /**
-     * Calculates the normalization of the vector
+     * calculate the vector multiply the scalar
      *
-     * @return the normalized vector
+     * @param scalar
+     * @return the vector multiply scalar
      */
-    final public Vector normalize() {
-        return new Vector(this.xyz.reduce(this.length()));
+    public Vector scale(double scalar) {
+        return new Vector(xyz.scale(scalar));
+    }
+
+    /**
+     * adds two vectors
+     *
+     * @param v the second vector
+     * @return the vectors sum
+     */
+    public Vector add(Vector v) {
+        if (this.equals(v.scale(-1)))
+            throw new IllegalArgumentException("You cant do vector+-itself");
+        return new Vector(xyz.add(v.xyz));
     }
 
     @Override
-    final public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Vector other)) return false;//if the type isnt vector
-        return super.equals((Point) obj);
+    public boolean equals(Object obj) {
+        if ((this == obj)) return true;
+        return ((obj instanceof Vector other)
+                && super.equals(other));
     }
 
-    public boolean equalsWithEpsilon(Vector other, double epsilon) {
-        if (other == null) return false;
-        return Math.abs(this.xyz.d1() - other.xyz.d1()) < epsilon
-                && Math.abs(this.xyz.d2() - other.xyz.d2()) < epsilon
-                && Math.abs(this.xyz.d3() - other.xyz.d3()) < epsilon;
+    @Override
+    public String toString() {
+        return "Vector{" +
+                "xyz=" + xyz +
+                "} " + super.toString();
     }
-
-    public boolean isOrthogonalTo(Vector other) {
-        return isZero(this.dotProduct(other));
-    }
-
 }

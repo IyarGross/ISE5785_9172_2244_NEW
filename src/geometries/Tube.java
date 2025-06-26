@@ -1,90 +1,74 @@
+//tube.java
 package geometries;
 
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
+import primitives.Util;
 
 import java.util.List;
 
-import static primitives.Util.isZero;
-
 /**
- * Tube class represents an infinite tube (cylindrical surface) in 3D space.
- * It extends RadialGeometry, so it has a radius and an axis represented by a Ray.
+ * The Tube class represents a tube geometry in three-dimensional space.
+ * A tube is defined by its radius and axis (a ray representing its center line).
+ * This class extends the RadialGeometry class.
  */
 public class Tube extends RadialGeometry {
 
-
-    protected final double _radius;
     /**
-     * radius of tube
+     * The axis of the tube, represented by a ray.
      */
-    protected final Ray _axisRay;
-    /**
-     * axis ray representing the central axis of the tube
-     */
+    protected Ray axis;
 
     /**
-     * Constructor for Tube based on a radius and an axis ray.
+     * Constructs a new Tube object with the specified radius and axis.
      *
-     * @param radius  radius of the tube
-     * @param axisRay ray representing the tube's central axis, originating from base of tube
-     * @throws IllegalArgumentException if the radius is not positive (handled in superclass)
+     * @param radius The radius of the tube.
+     * @param axis   The axis of the tube.
      */
-    public Tube(double radius, Ray axisRay) {
+    public Tube(double radius, Ray axis) {
         super(radius);
-        _axisRay = axisRay;
-        _radius = radius;
+        this.axis = axis;
     }
 
-    /**
-     * Calculates the normal vector to the tube surface at a given point.
-     * <p>
-     * Explanation:
-     * - Project the vector from the axis ray's origin (P0) to the given point onto the axis ray direction.
-     * - The projection scalar t is the dot product of the axis direction and the vector from P0 to the point.
-     * - Compute point O on the axis ray corresponding to this projection:
-     * If t == 0 (using isZero utility), O = P0 (base point).
-     * Else, O = P0 + t * direction.
-     * - The normal vector is then the vector from O to the given point, normalized.
-     * - If the given point lies exactly on the axis ray (point.equals(O)), throw IllegalArgumentException,
-     * since a tube's surface normal is undefined on the axis.
-     *
-     * @param point point on the tube surface
-     * @return normalized normal vector at the given point
-     * @throws IllegalArgumentException if the point lies exactly on the tube's axis ray
-     */
     @Override
-    public Vector getNormal(Point point) {
-        Vector direction = _axisRay.getDir();
-        Point P0 = _axisRay.getP0();
-
-        double t = direction.dotProduct(point.subtract(P0));
-        Point O;
-        if (isZero(t)) {
-            O = P0;
-        } else {
-            O = P0.add(direction.scale(t));
-        }
-
-        if (point.equals(O))
-            throw new IllegalArgumentException("point cannot be on the axis ray");
-
-        return point.subtract(O).normalize();
+    public Vector getNormal(Point p) {
+        if (p.subtract(axis.getHead()).dotProduct(axis.getDirection()) == 0)
+            throw new IllegalArgumentException("ERROR: the two points are vertical to the direction vector of the tube");
+        double t = axis.getDirection().dotProduct(p.subtract(axis.getHead()));
+        Point o = axis.getHead().add(axis.getDirection().scale(t));
+        return p.subtract(o).normalize();
     }
 
-    /**
-     * Finds the intersection points of a given ray with the tube.
-     * <p>
-     * Note:
-     * This method currently returns an empty list, meaning no intersections are calculated yet.
-     * Proper implementation should compute intersections between the ray and the tube surface.
-     *
-     * @param ray the ray to find intersections with the tube
-     * @return list of intersection points (currently always empty)
-     */
     @Override
     public List<Point> findIntersections(Ray ray) {
-        return null;
+        Vector d = ray.getDirection();
+        Vector v = axis.getDirection();
+        Point P0 = ray.getHead();
+        Point O = axis.getHead();
+        Vector deltaP = P0.subtract(O);
+
+
+        Vector A = d.subtract(v.scale(d.dotProduct(v)));
+        Vector B = deltaP.subtract(v.scale(deltaP.dotProduct(v)));
+
+        double a = A.dotProduct(A);
+        double b = 2 * A.dotProduct(B);
+        double c = B.dotProduct(B) - radius * radius;
+
+        double disc = b * b - 4 * a * c;
+        if (disc < 0 || Util.isZero(disc))
+            return disc < 0 ? null : List.of(ray.getPoint(Util.alignZero(-b / (2 * a))));
+
+        double sqrtDisc = Math.sqrt(disc);
+        double t1 = Util.alignZero((-b + sqrtDisc) / (2 * a));
+        double t2 = Util.alignZero((-b - sqrtDisc) / (2 * a));
+        List<Point> points = new java.util.LinkedList<>();
+        if (t1 > 0)
+            points.add(ray.getPoint(t1));
+        if (t2 > 0)
+            points.add(ray.getPoint(t2));
+
+        return points.isEmpty() ? null : points;
     }
 }

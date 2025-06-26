@@ -1,67 +1,42 @@
+//Geometries.java
 package geometries;
-
-import primitives.Point;
-import primitives.Ray;
-
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-
-/**
- * Composite design pattern that represents a collection of geometrical shapes (Intersectables).
- * Allows finding intersections with all contained shapes using a single method call.
- */
+import primitives.*;
 public class Geometries implements Intersectable {
-    // List holding all the geometrical shapes in the collection
-    private List<Intersectable> geometries;
+    List<Intersectable> geometries = new LinkedList<Intersectable>();
 
-    /**
-     * Default constructor, creates an empty collection of geometries
-     */
     public Geometries() {
-        geometries = new ArrayList<Intersectable>();
+
     }
 
-    /**
-     * Constructor that initializes the collection with one or more geometries
-     *
-     * @param geometries one or more geometries to add to the collection
-     */
     public Geometries(Intersectable... geometries) {
-
-        this.geometries = new ArrayList<>(List.of(geometries));
+        add(geometries);
     }
 
-    /**
-     * Adds one or more geometries to the collection
-     *
-     * @param geometries geometries to be added
-     */
     public void add(Intersectable... geometries) {
-        this.geometries.addAll(List.of(geometries));
+        Collections.addAll(this.geometries, geometries);
     }
 
     /**
-     * Implements {@link Intersectable#findIntersections(Ray)}.
-     * Finds all intersection points between a ray and all geometries in the collection.
+     * finds all the intersections of a ray with all the geometries in the list
      *
-     * @param ray the ray to intersect with the geometries
-     * @return a list of all intersection points found, or {@code null} if no intersections were found
+     * @param ray the ray that we want to check intersections with
+     * @return a list of the intersections of ray and the geometries from the list
      */
     @Override
     public List<Point> findIntersections(Ray ray) {
-        // List to collect all intersection points
-        List<Point> result = new ArrayList<>();
-        // Iterate over each geometry in the collection
+        List<Point> intersections = null;
         for (Intersectable geometry : geometries) {
-            // Find intersections of the current geometry with the ray
-            List<Point> intersections = geometry.findIntersections(ray);
-            // Find intersections of the current geometry with the ray
-            if (intersections != null) {
-                result.addAll(intersections);
-            }
+            List<Point> temp_points = geometry.findIntersections(ray);
+            if (temp_points != null && intersections == null)
+                intersections = new LinkedList<>(temp_points);
+            else if (temp_points != null)
+                intersections.addAll(temp_points);
         }
-        // Return null if no intersections were found
-        return result.isEmpty() ? null : result;
+        return intersections;
     }
 
 }

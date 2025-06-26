@@ -1,111 +1,78 @@
+//rayTest.java
 package primitives;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RayTests {
+class RayTest {
 
+    private static final double DELTA = 0.000001;
     /**
-     * Test method for Ray.getPoint with positive distance
+     * Test method for {@link primitives.Ray#getPoint(double)}
      */
     @Test
-    void testGetPointPositive() {
+    void getPoint() {
+
         // ============ Equivalence Partitions Tests ==============
-        Ray ray = new Ray(new Point(1, 2, 3), new Vector(1, 0, 0));
-        assertDoesNotThrow(() -> ray.getPoint(5.0));
-        Point result = ray.getPoint(5.0);
-        Point expected = new Point(6, 2, 3);
-        assertEquals(expected, result, "ERROR: Positive distance calculation failed");
-    }
+        //TC01: positive distance between head and point
+        Ray ray1=new Ray(new Point(0,0,1),new Vector(0,0,3).normalize());
+        Point point1=new Point(0,0,2);
+        assertEquals(
+                0,
+                ray1.getPoint(1).distance(point1),
+                "ERROR: getPoint returns wrong point when the distance between head and point is positive"
+        );
 
-    /**
-     * Test method for Ray.getPoint with negative distance
-     */
-    @Test
-    void testGetPointNegative() {
+
+        //TC02: negative distance between head and point
+        Ray ray2=new Ray(new Point(0,2,0),new Vector(0,1,0).normalize());
+        Point point2=new Point(0,1,0);
+        assertEquals(
+                0,
+                ray2.getPoint(-1).distance(point2),
+                DELTA,
+                "ERROR: getPoint returns wrong point when the distance between head and point is negative"
+        );
+
         // =============== Boundary Values Tests ==================
-        Ray ray = new Ray(new Point(1, 2, 3), new Vector(1, 0, 0));
-        assertThrows(IllegalArgumentException.class, () -> ray.getPoint(-5.0), "ERROR: Negative distance should throw an exception");
+        //TC03: distance between head and point = 0
+        Ray ray3=new Ray(new Point(1,2,3),new Vector(4,5,6));
+        assertEquals(
+                0,
+                ray3.getPoint(0).distance(ray3.getHead()),
+                "ERROR: getPoint returns wrong point when the distance between head and point is zero"
+        );
     }
-
-    /**
-     * Test method for Ray.getPoint with zero distance
-     */
-    @Test
-    void testGetPointZero() {
-        // =============== Boundary Values Tests ==================
-        Ray ray = new Ray(new Point(1, 2, 3), new Vector(1, 0, 0));
-        assertThrows(IllegalArgumentException.class, () -> ray.getPoint(0.0),
-                "ERROR: getPoint(0) should throw exception for zero vector");
-    }
-
-    /**
-     * Test method for {@link primitives.Ray#findClosestPoint(List)}
-     */
     @Test
     void testFindClosestPoint() {
-        Ray ray = new Ray(new Point(0, 1, 0), new Vector(0, 1, 0));
-        List<Point> list = new LinkedList<Point>();
-        Point point020 = new Point(0, 2, 0);
-        Point point110 = new Point(1, 1, 0);
-        Point point200 = new Point(2, 0, 0);
-        Point point364 = new Point(3, 6, 4);
-        Point point158 = new Point(1, 5, 8);
-        Point point333 = new Point(3, 3, 3);
 
+        Point p100 = new Point(1, 0, 0);
+        Point p200 = new Point(2, 0, 0);
+        Point p300 = new Point(3, 0, 0);
+        Vector v100 = new Vector(1,0,0);
+        List<Point> list = List.of(p100, p200, p300);
         // ============ Equivalence Partitions Tests ==============
-        //TC01: A point in the middle of the list is the one closest to the beginning of the ray
+        // EP01: closest point is in the middle of the list
 
-        list.add(point158);
-        list.add(point200);
-        list.add(point020);
-        list.add(point333);
-        list.add(point364);
-        assertEquals(
-                point020,
-                ray.findClosestPoint(list),
-                "Error: when sending a list that the point closest " +
-                        "of the beginning of the ray is in the middle returns a wrong point");
+        assertEquals(p200,new Ray(new Point(2.1,0,0),v100).findClosestPoint(list),"closest point is in the middle of the list" );
+
 
         // =============== Boundary Values Tests ==================
-        //TC02: An empty list (the method should return a null value).
 
-        list.clear();
-        assertNull(
-                ray.findClosestPoint(list),
-                "Error: when sending an empty list doesnt return null");
+        // BV01: empty list
+        assertNull(new Ray(new Point(2.1,0,0),v100).findClosestPoint(null),"empty list" );
 
-        //TC03: The first point is closest to the beginning of the horn
 
-        list.clear();
-        list.add(point020);
-        list.add(point158);
-        list.add(point200);
-        list.add(point333);
-        list.add(point364);
-        assertEquals(
-                point020,
-                ray.findClosestPoint(list),
-                "Error: when sending a list that the point closest " +
-                        "of the beginning of the ray is the first returns a wrong point");
+        // BV02:  first point in the list
+        assertEquals(p100,new Ray(new Point(1.1,0,0),v100).findClosestPoint(list),"first point in the list" );
 
-        //TC04: The last point is closest to the beginning of the horn
 
-        list.clear();
-        list.add(point158);
-        list.add(point200);
-        list.add(point364);
-        list.add(point333);
-        list.add(point110);
-        assertEquals(
-                point110,
-                ray.findClosestPoint(list),
-                "Error: when sending a list that the point closest " +
-                        "of the beginning of the ray is the last returns a wrong point");
+        // BV03: last point in the list
+        assertEquals(p300,new Ray(new Point(3.1,0,0),v100).findClosestPoint(list),"last point in the list" );
 
     }
+
 }

@@ -1,36 +1,47 @@
 package lighting;
 
 import primitives.Color;
-import primitives.Double3;
 
 /**
- * a class that represents the ambient light
+ * This class represents ambient light
+ *
+ * @author Yahel Sayedoff
+ * @author Hodaya Guama
  */
 public class AmbientLight {
+    private static final double KA = 0.1;
 
-    public final static AmbientLight NONE = new AmbientLight(Color.BLACK, Double3.ZERO);
     private final Color intensity;
 
     /**
-     * constructor with Double3 coefficient
-     *
-     * @param iA the base color
-     * @param kI the attenuation factor
+     * black ambient light (no light)
      */
-    public AmbientLight(Color iA, Double3 kI) {
-        intensity = iA.scale(kI);
+    public static AmbientLight NONE = new AmbientLight(Color.BLACK, 0d);
+
+    /**
+     * constructor for the intensity
+     *
+     * @param IA original intensity of the lighting
+     */
+    public AmbientLight(Color IA) {
+        intensity = IA.scale(KA);
     }
 
     /**
-     * constructor with double coefficient
+     * constructor for the intensity
      *
-     * @param iA the base color
-     * @param kI the attenuation factor
+     * @param IA original intensity of the lighting
+     * @param KA attenuation coefficient of the lighting
      */
-    public AmbientLight(Color iA, double kI) {
-        intensity = iA.scale(kI);
+    public AmbientLight(Color IA, double KA) {
+        intensity = IA.scale(KA);
     }
 
+    /**
+     * getter for intensity
+     *
+     * @return intensity
+     */
     public Color getIntensity() {
         return intensity;
     }

@@ -5,26 +5,31 @@ import primitives.Ray;
 import scene.Scene;
 
 /**
- * an  abstract class for the basic ray in the scene
+ * This abstract class represents a ray tracer
+ *
+ * @author Yahel Sayedoff
+ * @author Hodaya Guama
  */
 public abstract class RayTracerBase {
+    /**
+     * the scene
+     */
     protected Scene scene;
 
     /**
-     * a constructor for ray tracer base
+     * contructor for scene
      *
-     * @param scene the scene of the photo
+     * @param scene the scene
      */
     public RayTracerBase(Scene scene) {
         this.scene = scene;
     }
 
     /**
-     * receives a ray in the parameter and returns a color
+     * function to calclate the color of a ray through pixel in the scene
      *
      * @param ray the ray
-     * @return the color of the point the ray gets to
+     * @return the color
      */
     public abstract Color traceRay(Ray ray);
-
 }

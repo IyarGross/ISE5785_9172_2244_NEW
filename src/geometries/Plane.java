@@ -1,3 +1,4 @@
+//plane.java
 package geometries;
 
 import primitives.Point;
@@ -5,92 +6,73 @@ import primitives.Ray;
 import primitives.Util;
 import primitives.Vector;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import static primitives.Util.isZero;
+
 /**
- * Plane represents an infinite 2D plane in 3D space.
+ * The Plane class represents a plane geometry in 3D space.
+ * It implements the Geometry interface.
  */
-public class Plane extends Geometry {
-    protected final Point p0;
-    protected final Vector normal;
+public class Plane implements Geometry {
+
+    /** A point on the plane. */
+    private Point q;
+
+    /** The normal vector to the plane. */
+    private Vector normal;
 
     /**
-     * Constructs a plane based on three points in space.
-     * The plane is defined by the points p1, p2, p3.
-     * The normal vector is calculated as the normalized cross product of vectors (p2-p1) and (p3-p2).
-     *
-     * @param p1 First point on the plane
-     * @param p2 Second point on the plane
-     * @param p3 Third point on the plane
+     * Constructs a Plane object from three points on the plane.
+     * @param a The first point on the plane.
+     * @param b The second point on the plane.
+     * @param c The third point on the plane.
      */
-    public Plane(Point p1, Point p2, Point p3) {
-        Vector v1 = p2.subtract(p1); // Vector from p1 to p2
-        Vector v2 = p3.subtract(p2); // Vector from p2 to p3
-        this.normal = v1.crossProduct(v2).normalize(); // Normal vector to the plane
-        this.p0 = p1; // Reference point on the plane
+    public Plane(Point a, Point b, Point c) {
+        this.q = a;
+        Vector vec1 = a.subtract(b);
+        Vector vec2 = a.subtract(c);
+        this.normal = vec1.crossProduct(vec2).normalize();
     }
 
     /**
-     * Constructs a plane based on a normal vector and a point on the plane.
-     *
-     * @param normal the normal vector to the plane
-     * @param p0     a point on the plane
+     * Constructs a Plane object from a point on the plane and its normal vector.
+     * @param q A point on the plane.
+     * @param normal The normal vector to the plane.
      */
-    public Plane(Vector normal, Point p0) {
-        this.normal = normal;
-        this.p0 = p0;
+    public Plane(Point q, Vector normal) {
+        this.q = q;
+        this.normal = normal.normalize();
+    }
+
+
+    @Override
+    public Vector getNormal(Point q) {
+        return normal;
     }
 
     /**
      * Returns the normal vector to the plane.
-     * Since a plane has the same normal everywhere, the input point is unused.
-     *
-     * @param point any point on the plane (unused)
-     * @return the normalized normal vector of the plane
+     * @return The normal vector to the plane.
      */
-    @Override
-    public Vector getNormal(Point point) {
+    public Vector getNormal() {
         return normal;
     }
 
+
     /**
-     * Finds the intersection points of the plane with the given ray.
-     *
-     * @param ray the ray to intersect with the plane
-     * @return a list containing the intersection point if one exists; otherwise, null.
+     * finds all the intersections of a ray and the plane
+     * @param ray the ray that we want to check intersections with
+     * @return a list of the intersections of ray and plane
      */
     @Override
     public List<Point> findIntersections(Ray ray) {
-        // If the ray origin is exactly on the plane's reference point, no intersections to consider
-        if (p0.equals(ray.getP0())) return null;
+        if(ray.getHead().equals(q))
+            return null;
+        double t= normal.dotProduct(q.subtract(ray.getHead()))/(normal.dotProduct(ray.getDirection()));
+        if(t<=0 ||isZero(ray.getDirection().dotProduct(normal)))
+            return null;
+        return List.of(ray.getPoint(t));
 
-        Vector n = getNormal();
-        double nv = ray.getDir().dotProduct(n);
-
-        // If dot product is zero, ray is parallel to the plane => no intersection
-        if (Util.isZero(nv)) return null;
-
-        // Calculate t parameter for the ray equation: P = P0 + t * v
-        double t = Util.alignZero((p0.subtract(ray.getP0()).dotProduct(n)) / nv);
-
-        // If t <= 0, intersection is behind the ray origin or at origin, so no valid intersection
-        if (t <= 0) return null;
-
-        // Return the single intersection point at distance t along the ray
-        return new ArrayList<>() {{
-            add(ray.getPoint(t));
-        }};
     }
-
-    /**
-     * Private helper method to get the plane normal.
-     *
-     * @return the normal vector of the plane
-     */
-    private Vector getNormal() {
-        return normal;
-    }
-
 }
-

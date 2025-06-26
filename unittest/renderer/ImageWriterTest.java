@@ -3,26 +3,27 @@ package renderer;
 import org.junit.jupiter.api.Test;
 import primitives.Color;
 
-class ImageWriterTest {
+import static primitives.Util.*;
+class ImageWriterTests {
     /**
-     * Test method for {@link .${CLASS_NAME}.Name(.${CLASS_NAME})}.
+     * test
      */
     @Test
-    void writeToImage() {
-        ImageWriter imageWriter = new ImageWriter("yellow", 800, 500);
-        Color red = new Color(255, 0, 0);
-        for (int i = 0; i < imageWriter.getnX(); i++) {
-            for (int j = 0; j < imageWriter.getnY(); j++) {
-                imageWriter.writePixel(i, j, new Color(java.awt.Color.YELLOW));
-            }
-        }
-        for (int i = 0; i < 800; i += 50) {
+    public void testImageWriter() {
 
-            for (int q = 0; q < 500; q += 50) {
-                imageWriter.writePixel(i, q, red);
-            }
-
+        ImageWriter image = new ImageWriter( "myImage",800, 500);
+        for (int j = 0; j < 800; j++) {
+            if (isZero(j % 50))
+                for (int i = 0; i < 500; i++)
+                    image.writePixel(j, i, Color.GREEN);
+            else
+                for (int i = 0; i < 500; i++) {
+                    if (isZero(i % 50))
+                        image.writePixel(j, i, Color.GREEN);
+                    else
+                        image.writePixel(j, i, new Color(7, 10, 170));
+                }
         }
-        imageWriter.writeToImage();
+        image.writeToImage();
     }
 }

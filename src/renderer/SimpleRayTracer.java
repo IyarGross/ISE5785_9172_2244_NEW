@@ -1,47 +1,44 @@
 package renderer;
 
+
 import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import scene.Scene;
 
-import java.util.List;
-
 /**
- * extends ray tracer base and represent a simple ray
+ * This class represents a simple ray tracer
+ *
+ * @author Yahel Sayedoff
+ * @author Hodaya Guma
  */
+
 public class SimpleRayTracer extends RayTracerBase {
 
     /**
-     * a constructor for simple ray tracer
+     * constructor for scene
      *
-     * @param scene the scene of the photo
+     * @param scene the scene
      */
     public SimpleRayTracer(Scene scene) {
         super(scene);
     }
 
-    /**
-     * calculate the color of the given point
-     *
-     * @param point the point that i want to find the color of her
-     * @return the color of the point
-     */
-    private Color calcColor(Point point) {
-        return scene.ambientLight.getIntensity();
+    @Override
+    public Color traceRay(Ray ray) {
+        Point point = ray.findClosestPoint(scene.geometries.findIntersections(ray));
+        if (point == null)
+            return scene.background;
+        return calcColor(point);
     }
 
     /**
-     * a method that finds the color of the pixel the ray goes through
+     * this function calculates color of a point
      *
-     * @param ray the ray that goes through the pixel we want to find the color for
-     * @return the color of the pixel the ray goes through
+     * @param point the point
+     * @return the color
      */
-    @Override
-    public Color traceRay(Ray ray) {
-        List<Point> intersections = scene.geometries.findIntersections(ray);
-        if (intersections == null)
-            return scene.background;
-        return calcColor(ray.findClosestPoint(intersections));
+    private Color calcColor(Point point) {
+        return scene.ambientLight.getIntensity();
     }
 }

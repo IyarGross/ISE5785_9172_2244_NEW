@@ -4,12 +4,8 @@ package renderer;
  * Ray tracer types
  */
 public enum RayTracerType {
-    /**
-     * Simple (basic) ray tracer
-     */
+    /** Simple (basic) ray tracer */
     SIMPLE,
-    /**
-     * Ray tracer using regular grid
-     */
+    /** Ray tracer using regular grid */
     GRID
 }

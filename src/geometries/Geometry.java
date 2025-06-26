@@ -1,3 +1,4 @@
+//Geometry.java
 package geometries;
 
 import primitives.Point;
@@ -7,26 +8,18 @@ import primitives.Vector;
 import java.util.List;
 
 /**
- * Abstract base class for all geometric objects that are able to be intersected with a ray
- * and able to provide a normal vector at a given point on their surface.
- * Implements the {@link Intersectable} interface.
+ * The Geometry interface represents a geometric shape in 3D space.
+ * Now it extends the Intersectable interface.
  */
-public abstract class Geometry implements Intersectable {
+public interface Geometry extends Intersectable {
     /**
-     * Returns the normal vector to the geometry at the given point on its surface.
+     * Computes and returns the normal vector to the geometry at a given point.
      *
-     * @param point the point on the surface of the geometry
-     * @return the normal vector
+     * @param p the point at which to compute the normal vector.
+     * @return the normal vector to the geometry at the given point.
      */
-    public abstract Vector getNormal(Point point);
+    Vector getNormal(Point p);
 
-    /**
-     * Finds the intersection points of a ray with the geometry.
-     * This method overrides the one from {@link Intersectable}.
-     *
-     * @param ray the ray to intersect with
-     * @return a list of intersection points, or {@code null} if there are no intersections
-     */
     @Override
-    public abstract List<Point> findIntersections(Ray ray);
+    List<Point> findIntersections(Ray ray);
 }
