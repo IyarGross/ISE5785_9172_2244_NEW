@@ -118,4 +118,15 @@ public class Vector extends Point {
                 "xyz=" + xyz +
                 "} " + super.toString();
     }
+    /**
+     * checks if the current vector is parallel to the parameter vector
+     * @param v1 the vector that is checked
+     * @return true if the current vector is parallel to the parameter vector, false if it isn't
+     */
+    public Boolean isParallel(Vector v1) {
+        Vector n1 = normalize();
+        Vector n2 = v1.normalize();
+        return n1.equals(n2) || n1.equals(n2.scale(-1));
+    }
+
 }

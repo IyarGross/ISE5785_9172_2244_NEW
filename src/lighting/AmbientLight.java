@@ -1,48 +1,37 @@
 package lighting;
 
 import primitives.Color;
+import primitives.Double3;
 
 /**
- * This class represents ambient light
- *
- * @author Yahel Sayedoff
- * @author Hodaya Guama
+ * Class AmbientLight represents an ambient light source which is a fixed-intensity and fixed-color light source
+ * that affects all objects in the scene equally.
+ * @author Rachel and Tehila
  */
-public class AmbientLight {
-    private static final double KA = 0.1;
-
-    private final Color intensity;
+public class AmbientLight extends Light {
 
     /**
-     * black ambient light (no light)
+     * the default ambient light which is no light (black)
      */
-    public static AmbientLight NONE = new AmbientLight(Color.BLACK, 0d);
+    public static final AmbientLight NONE = new AmbientLight(new Color(java.awt.Color.BLACK), 0);
 
     /**
-     * constructor for the intensity
+     * Constructor to initialize an ambient light with an intensity color and the attenuation coefficient.
      *
-     * @param IA original intensity of the lighting
+     * @param iA the intensity color.
+     * @param kA the attenuation coefficient using Double3.
      */
-    public AmbientLight(Color IA) {
-        intensity = IA.scale(KA);
+    public AmbientLight(Color iA, Double3 kA) {
+        super(iA.scale(kA));
     }
 
     /**
-     * constructor for the intensity
+     * Constructor to initialize an ambient light with an intensity color and the attenuation coefficient.
      *
-     * @param IA original intensity of the lighting
-     * @param KA attenuation coefficient of the lighting
+     * @param iA the intensity color.
+     * @param kA the attenuation coefficient using double.
      */
-    public AmbientLight(Color IA, double KA) {
-        intensity = IA.scale(KA);
-    }
-
-    /**
-     * getter for intensity
-     *
-     * @return intensity
-     */
-    public Color getIntensity() {
-        return intensity;
+    public AmbientLight(Color iA, double kA) {
+        super(iA.scale(kA));
     }
 }

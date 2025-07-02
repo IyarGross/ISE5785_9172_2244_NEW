@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Cylinder extends Tube{
 
-    private double height; // The height of the cylinder
+    private final double height; // The height of the cylinder
 
     /**
      * Constructs a cylinder with the given radius, axis, and height.
@@ -29,7 +29,7 @@ public class Cylinder extends Tube{
     /**
      * calculates the normal to the cylinder in point p
      *
-     * @param p the point that the normal is going throw
+     * @param point the point that the normal is going throw
      * @return the normal to the cylinder in point p
      */
     @Override
@@ -58,41 +58,8 @@ public class Cylinder extends Tube{
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
-        List<Point> result = new java.util.LinkedList<>();
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+        return null;
 
-        List<Point> tubeIntersections = super.findIntersections(ray);
-        if (tubeIntersections != null) {
-            for (Point p : tubeIntersections) {
-                double projLen = p.subtract(axis.getHead()).dotProduct(axis.getDirection());
-                if (projLen > 0 && projLen < height)
-                    result.add(p);
-            }
-        }
-
-        Vector v = axis.getDirection();
-        Point topCenter = axis.getPoint(height);
-        double denomTop = v.dotProduct(ray.getDirection());
-        if (!Util.isZero(denomTop)) {
-            double tTop = Util.alignZero(v.dotProduct(topCenter.subtract(ray.getHead())) / denomTop);
-            if (tTop > 0) {
-                Point pTop = ray.getPoint(tTop);
-                if (topCenter.distance(pTop) <= radius)
-                    result.add(pTop);
-            }
-        }
-
-        Point bottomCenter = axis.getHead();
-        double denomBottom = v.dotProduct(ray.getDirection());
-        if (!Util.isZero(denomBottom)) {
-            double tBottom = Util.alignZero(v.dotProduct(bottomCenter.subtract(ray.getHead())) / denomBottom);
-            if (tBottom > 0) {
-                Point pBottom = ray.getPoint(tBottom);
-                if (bottomCenter.distance(pBottom) <= radius)
-                    result.add(pBottom);
-            }
-        }
-
-        return result.isEmpty() ? null : result;
     }
 }

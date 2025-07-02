@@ -113,6 +113,14 @@ public class Camera implements Cloneable {
         imageWriter.writeToImage();
         return this;
     }
+    /**
+     * delegate to write to image of image writer
+     */
+    public void writeToImage() {
+        if (imageWriter == null)
+            throw new MissingResourceException("Image Writer is Missing", "Camera", "Set Image Writer");
+        imageWriter.writeToImage();
+    }
 
     /**
      * Camera builder
@@ -125,6 +133,13 @@ public class Camera implements Cloneable {
             return this;
         }
 
+        /**
+         * set the direction of the camera
+         *
+         * @param vTo the vector that gives the 'to' forward direction
+         * @param vUp the vector that gives the upward direction
+         * @return the camera,this object
+         */
         public Builder setDirection(Vector vTo, Vector vUp) {
             if (!Util.isZero(vTo.dotProduct(vUp)))
                 throw new IllegalArgumentException("vTo and vUp must be orthogonal");
@@ -197,6 +212,16 @@ public class Camera implements Cloneable {
             } catch (CloneNotSupportedException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        public Builder setRayTracer(SimpleRayTracer rayTracer) {
+            camera.rayTracer = rayTracer;
+            return this;
+        }
+
+        public Builder setImageWriter(ImageWriter imageWriter) {
+            camera.imageWriter = imageWriter;
+            return this;
         }
     }
 

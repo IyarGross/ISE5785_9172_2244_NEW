@@ -8,6 +8,9 @@ import primitives.Util;
 
 import java.util.List;
 
+import static java.lang.Math.sqrt;
+import static primitives.Util.alignZero;
+
 /**
  * The Tube class represents a tube geometry in three-dimensional space.
  * A tube is defined by its radius and axis (a ray representing its center line).
@@ -41,34 +44,46 @@ public class Tube extends RadialGeometry {
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
-        Vector d = ray.getDirection();
-        Vector v = axis.getDirection();
-        Point P0 = ray.getHead();
-        Point O = axis.getHead();
-        Vector deltaP = P0.subtract(O);
-
-
-        Vector A = d.subtract(v.scale(d.dotProduct(v)));
-        Vector B = deltaP.subtract(v.scale(deltaP.dotProduct(v)));
-
-        double a = A.dotProduct(A);
-        double b = 2 * A.dotProduct(B);
-        double c = B.dotProduct(B) - radius * radius;
-
-        double disc = b * b - 4 * a * c;
-        if (disc < 0 || Util.isZero(disc))
-            return disc < 0 ? null : List.of(ray.getPoint(Util.alignZero(-b / (2 * a))));
-
-        double sqrtDisc = Math.sqrt(disc);
-        double t1 = Util.alignZero((-b + sqrtDisc) / (2 * a));
-        double t2 = Util.alignZero((-b - sqrtDisc) / (2 * a));
-        List<Point> points = new java.util.LinkedList<>();
-        if (t1 > 0)
-            points.add(ray.getPoint(t1));
-        if (t2 > 0)
-            points.add(ray.getPoint(t2));
-
-        return points.isEmpty() ? null : points;
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+        Vector n = ray.getDirection();
+        Point o = ray.getHead();
+        Vector a = axis.getDirection();
+        double dot, A, B;
+        if (a.isParallel(n)) { //if the ray is parallel to the tube, there are no intersections
+            return null;
+        }
+        Vector cross = n.crossProduct(a);
+        A = alignZero(cross.lengthSquared());
+        if (o.equals(axis.getHead())) {
+            dot = 0;
+            B = 0;
+        } else {
+            Vector b = axis.getHead().subtract(o);
+            dot = alignZero(b.dotProduct(cross));
+            if (a.isParallel(b)) {
+                B = 0;
+            } else {
+                B = alignZero(cross.dotProduct(b.crossProduct(a)));
+            }
+        }
+        double discriminant = alignZero(A * radius * radius - a.lengthSquared() * dot * dot);
+        if (discriminant <= 0) {
+            //either there are no intersections, or there is only one which means the ray is tangent to the tube
+            return null;
+        }
+        double sqrt = sqrt(discriminant);
+        double d1 = (B - sqrt) / A; //offset of the first intersection point
+        double d2 = (B + sqrt) / A; //offset of the second intersection point
+        if (alignZero(d1) <= 0 ) { //the ray starts on the tube
+            if (alignZero(d2) <= 0) {
+                return null;
+            }
+            return List.of(new Intersection(this, ray.getPoint(d2))); //there is only one intersection point
+        }
+        return List.of(
+                new Intersection(this, ray.getPoint(d1)),
+                new Intersection(this, ray.getPoint(d2))
+        );
     }
+
 }

@@ -8,16 +8,16 @@ import primitives.Vector;
 
 import java.util.List;
 
-import static primitives.Util.isZero;
+import static primitives.Util.alignZero;
 
 /**
  * The Plane class represents a plane geometry in 3D space.
  * It implements the Geometry interface.
  */
-public class Plane implements Geometry {
+public class Plane extends Geometry {
 
     /** A point on the plane. */
-    private Point q;
+    private Point p0;
 
     /** The normal vector to the plane. */
     private Vector normal;
@@ -29,7 +29,7 @@ public class Plane implements Geometry {
      * @param c The third point on the plane.
      */
     public Plane(Point a, Point b, Point c) {
-        this.q = a;
+        this.p0 = a;
         Vector vec1 = a.subtract(b);
         Vector vec2 = a.subtract(c);
         this.normal = vec1.crossProduct(vec2).normalize();
@@ -37,11 +37,11 @@ public class Plane implements Geometry {
 
     /**
      * Constructs a Plane object from a point on the plane and its normal vector.
-     * @param q A point on the plane.
+     * @param p0 A point on the plane.
      * @param normal The normal vector to the plane.
      */
-    public Plane(Point q, Vector normal) {
-        this.q = q;
+    public Plane(Point p0, Vector normal) {
+        this.p0 = p0;
         this.normal = normal.normalize();
     }
 
@@ -65,14 +65,23 @@ public class Plane implements Geometry {
      * @param ray the ray that we want to check intersections with
      * @return a list of the intersections of ray and plane
      */
-    @Override
-    public List<Point> findIntersections(Ray ray) {
-        if(ray.getHead().equals(q))
-            return null;
-        double t= normal.dotProduct(q.subtract(ray.getHead()))/(normal.dotProduct(ray.getDirection()));
-        if(t<=0 ||isZero(ray.getDirection().dotProduct(normal)))
-            return null;
-        return List.of(ray.getPoint(t));
 
+    @Override
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+        Vector direction = ray.getDirection();
+        Point head = ray.getHead();
+        double dotProduct = alignZero(direction.dotProduct(normal));
+        if (dotProduct == 0) {
+            return null;
+        }
+        if (p0.equals(head)) {
+            return null;
+        }
+        double t = alignZero(normal.dotProduct(p0.subtract(head)) / dotProduct);
+        if (t <= 0) {
+            return null;
+        } else {
+            return List.of(new Intersection(this, ray.getPoint(t)));
+        }
     }
 }

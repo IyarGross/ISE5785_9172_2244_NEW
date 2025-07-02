@@ -8,13 +8,16 @@ import primitives.Vector;
 
 import java.util.List;
 
+import static java.lang.Math.sqrt;
+import static primitives.Util.alignZero;
+
 /**
  * The Sphere class represents a sphere geometry in three-dimensional space.
  * A sphere is defined by its radius and center point.
  * This class extends the RadialGeometry class.
  */
 public class Sphere extends RadialGeometry {
-
+    /** the center of the sphere */
     private Point center;
 
     /**
@@ -40,40 +43,23 @@ public class Sphere extends RadialGeometry {
 
 
     /**
-     * Finds all intersection points of a ray with the sphere.
+     * finds all the intersections of a ray and the sphere
      *
-     * @param ray the ray to intersect with.
-     * @return a list of intersection points, or null if there are no intersections.
+     * @param ray the ray that we want to check intersections with
+     * @return a list of the intersections of ray and sphere
      */
+
     @Override
-    public List<Point> findIntersections(Ray ray) {
-        Point p0 = ray.getPoint(0);
-        Vector dir = ray.getDirection();
-
-        // if the ray starts at the center of the sphere
-        if (center.equals(p0))
-            return List.of(p0.add(dir.scale(radius)));
-
-        Vector u = (center.subtract(p0));
-        double tm = dir.dotProduct(u);
-        double d = Util.alignZero(Math.sqrt(u.lengthSquared() - tm * tm));
-        if (d >= radius)
-            return null;
-
-        double th = Math.sqrt(radius * radius - d * d);
-        double t1 = Util.alignZero(tm - th);
-        double t2 = Util.alignZero(tm + th);
-
-        // if the ray starts before the sphere
-        if (t1 > 0 && t2 > 0)
-            return List.of(p0.add(dir.scale(t1)), p0.add(dir.scale(t2)));
-
-        // if the ray starts inside the sphere
-        if (t1 > 0)
-            return List.of(p0.add(dir.scale(t1)));
-        if (t2 > 0)
-            return List.of(p0.add(dir.scale(t2)));
-
-        return null;
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+        if (center.equals(ray.getHead())) return List.of(new Intersection(this,ray.getPoint(radius))); //boundary value po is center
+        Vector u= center.subtract(ray.getHead());
+        double tm = Util.alignZero(u.dotProduct(ray.getDirection())) ;
+        double d= sqrt(Util.alignZero(u.lengthSquared()-tm*tm));
+        if (d>=radius) return null;
+        double th = sqrt(radius*radius-d*d);
+        if (Util.alignZero(tm+th)<=0 && Util.alignZero(tm-th)<=0 ) return null;
+        if (Util.alignZero(tm+th)<=0) return List.of(new Intersection(this,ray.getPoint(tm-th))); //po inside the shpere
+        if (Util.alignZero(tm-th)<=0) return List.of(new Intersection(this,ray.getPoint(tm+th))); ;//po inside the shpere
+        return List.of(new Intersection(this,ray.getPoint(tm-th)),new Intersection(this,ray.getPoint(tm+th))); //regular case to intersection
     }
 }
