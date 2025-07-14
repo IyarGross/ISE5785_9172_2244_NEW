@@ -1,3 +1,4 @@
+//triangleTest.java
 package geometries;
 
 import org.junit.jupiter.api.Test;
@@ -5,74 +6,108 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static primitives.Util.isZero;
 
-class TriangleTests {
+class TriangleTest {
+    private static final double DELTA = 0.00001;
+
     /**
-     * Test method for {@link .geometries.Triangle.GetNormal(.geometries.Triangle)}.
+     * Test for getNormal(Point) in a Triangle.
+     * <p>
+     * ============ Equivalence Partitions Tests ==============
+     * Case 1: Construct a triangle using three non-collinear points and verify
+     * that the computed normal is a unit vector and orthogonal to two independent edges.
+     * <p>
+     * Note: The point passed to getNormal is chosen as one of the vertices, ensuring it lies on the triangle.
      */
     @Test
     void testGetNormal() {
-        // ============ Equivalence Partitions Tests ==============
-        Point[] pts =
-                { new Point(0, 0, 0), new Point(1, 0, 0), new Point(1, 0.5, 0) };
-        Triangle triangle = new Triangle(pts);
-        Vector normal = triangle.getNormal(new Point(0,0,0));
-        assertTrue( isZero(normal.length()-1),"Triangle -getNormal - the returned vector is not a unit vector");
-        assertDoesNotThrow(() -> triangle.getNormal(new Point(0, 0, 1))); // ensure there are no exceptions
-        // ensure the result is orthogonal to all the edges
-        for (int i = 0; i < 3; ++i)
-            assertTrue(isZero(normal.dotProduct(pts[i].subtract(pts[i == 0 ? 2 : i - 1]))),
-                    "Polygon's normal is not orthogonal to one of the edges");
+        // Create three non-collinear points for a triangle
+        final Point p1 = new Point(0, 0, 1);
+        final Point p2 = new Point(1, 0, 0);
+        final Point p3 = new Point(0, 1, 0);
+        // Construct the triangle (Triangle extends Polygon and uses its 3-point constructor)
+        Triangle triangle = new Triangle(p1, p2, p3);
+
+        // Retrieve the normal; using p1 (which lies on the triangle) as argument.
+        Vector normal = triangle.getNormal(p1);
+
+        // Equivalence Case: Check that the normal is a unit vector.
+        assertEquals(1, normal.length(), DELTA, "ERROR: Triangle's normal is not a unit vector");
+
+        // Equivalence Case: Check that the normal is orthogonal to the triangle's edges.
+        Vector edge1 = p2.subtract(p1);
+        Vector edge2 = p3.subtract(p1);
+        assertEquals(0, normal.dotProduct(edge1), DELTA, "ERROR: Triangle's normal is not orthogonal to edge1");
+        assertEquals(0, normal.dotProduct(edge2), DELTA, "ERROR: Triangle's normal is not orthogonal to edge2");
     }
+
     /**
-     * Test method for {@link .geometries.Triangle.FindIntsersections(.geometries.Triangle)}.
+     * Test method for {@link geometries.Triangle#findIntersections(Ray)}
      */
     @Test
-    void testFindIntsersections() {
-        Triangle triangle = new Triangle(new Point(-1,0,0),new Point(0,1,0),new Point(0,0,1));
-        Plane plane = new Plane(new Point(-1,0,0),new Point(0,1,0),new Point(0,0,1));
+    void testFindIntersections() {
+        Point[] points =
+                {new Point(0, 0, 1),
+                        new Point(1, 0, 0),
+                        new Point(0, 1, 0)
+                };
+        Triangle triangle = new Triangle(points[0], points[1], points[2]);
 
-        /* ============ first Equivalence Partitions Tests ==============  one intersect*/
+        // ============ Equivalence Partitions Tests ==============
+        //TC01: Ray crosses the triangle inside the triangle (1 point)
+        Point[] points2 =
+                {new Point(0, 2, 0),
+                        new Point(-3, 0, 0),
+                        new Point(0, -4, 0)
+                };
+        Triangle triangle2 = new Triangle(points2[0], points2[1], points2[2]);
+        var exp01 = List.of(new Point(-2, 0, 0));
         assertEquals(
-                new ArrayList() {{add(new Point(-0.312267938755213, 0.303773122945835, 0.383958938298951));}},
-                triangle.findIntersections(new Ray(new Point  (-0.161168247993315, 0.156783889527054, 0.198169525932423),new Vector (-0.681654255131519,0.663110797336576,0.838149587596402)))
-                ,"triangle findIntserctions doesn't work"
-        );
-        // ============ second Equivalence Partitions Tests ============== the ray intersect the plane which contain the triangle
-        assertEquals(
-                null,
-                triangle.findIntersections(new Ray(new Point  (0,-1,0),new Vector (0.491148577250395, 1.840858465907946, 0.650290111342449)))
-                ,"triangle findIntserctions doesn't work"
-        );
-        // ============ third Equivalence Partitions Tests ============== the ray is not intersect the plane which contain the triangle
-        assertEquals(
-                null,
-                triangle.findIntersections(new Ray(new Point  (0,0,-1),new Vector (-2.882078564508556, -0.682305953275544, 1.575279632945972)))
-                ,"triangle findIntserctions doesn't work"
-        );
-        triangle = new Triangle(new Point(0,1,0),new Point(-1,0,0),new Point(0,0,2));
+                exp01,
+                triangle2.findIntersections(
+                        new Ray(
+                                new Point(1.87, -4.37, 1),
+                                new Vector(-3.87, 4.37, -1))),
+                "ERROR: Ray crosses the triangle inside the triangle returns a wrong point");
+        //TC02: Ray pass out of the triangle opposite to a rib (0 points)
+        assertNull(
+                triangle.findIntersections(
+                        new Ray(
+                                new Point(0, 0, 4),
+                                new Vector(0, -1, 1))),
+                "ERROR: Ray pass out of the triangle opposite to a rib returns a point");
+        //TC02: Ray pass out of the triangle opposite to a vertex (0 points)
+        assertNull(
+                triangle.findIntersections(
+                        new Ray(
+                                new Point(-1, -1, 2),
+                                new Vector(-1, 1, 0))),
+                "ERROR: Ray pass out of the triangle opposite to a vertex returns a point");
+        // =============== Boundary Values Tests ==================
+        //TC11: Ray crosses the triangle on a rib of the triangle (0 points)
+        assertNull(
+                triangle.findIntersections(
+                        new Ray(
+                                new Point(2, 0, 0.5),
+                                new Vector(2, 0, 0))),
+                "ERROR: Ray crosses the triangle on a rib of the triangle returns a point");
+        //TC12: Ray crosses the triangle on a vertex of the triangle (0 points)
+        assertNull(
+                triangle.findIntersections(
+                        new Ray(
+                                new Point(0, 0, 1),
+                                new Vector(-1, 1, 0))),
+                "ERROR: Ray crosses the triangle on a vertex of the triangle returns a point");
+        //TC13: Ray crosses the continuation of a rib of the triangle (0 points)
+        assertNull(
+                triangle.findIntersections(
+                        new Ray(
+                                new Point(4, 4, 0),
+                                new Vector(2, 0, 0))),
+                "ERROR: Ray crosses the continuation of a rib of the triangle returns a point");
 
-        // =============== first Boundary Value Tests ================== against the edge
-        assertEquals(
-                null,
-                triangle.findIntersections(new Ray(new Point  (0,0,-1),new Vector (-0.488126535616246, 0.511873464383754, 1)))
-                ,"triangle findIntserctions doesn't work"
-        );
-        // =============== second Boundary Value Tests ================== against the vertex
-        assertEquals(
-                null,
-                triangle.findIntersections(new Ray(new Point  (1,0,0),new Vector (-1.663099686770676, 0, 3.326199373541352)))
-                ,"triangle findIntserctions doesn't work"
-        );
-        // =============== third Boundary Value Tests ================== on the vertex
-        assertEquals(
-                null,
-                triangle.findIntersections(new Ray(new Point  (2,0,0),new Vector  (-2, 3.1272332639975,0)))
-                ,"triangle findIntserctions doesn't work"
-        );
     }
 }

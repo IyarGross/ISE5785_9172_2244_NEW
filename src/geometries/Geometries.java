@@ -1,34 +1,44 @@
+//Geometries.java
 package geometries;
-
-import primitives.Point;
-import primitives.Ray;
-
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-
-/*
- * composite design pattern, allow to use the method findIntersection on a forms collection
- * */
-public class Geometries implements Intersectable {
-    private List<Intersectable> geometriesList;
+import primitives.*;
+public class Geometries extends Intersectable {
+    List<Intersectable> geometries = new LinkedList<Intersectable>();
 
     public Geometries() {
-        geometriesList = new ArrayList<Intersectable>();
+
     }
 
     public Geometries(Intersectable... geometries) {
-        geometriesList = List.of(geometries);
+        add(geometries);
     }
 
     public void add(Intersectable... geometries) {
-        geometriesList.addAll(List.of(geometries));
-    }
-    public List<Point> findIntersections(Ray ray){
-    return null;
+        Collections.addAll(this.geometries, geometries);
     }
 
+    /**
+     * finds all the intersections of a ray with all the geometries in the list
+     *
+     * @param ray the ray that we want to check intersections with
+     * @return a list of the intersections of ray and the geometries from the list
+     */
     @Override
-    public List<Point> findIntsersections(Ray ray) {
-        return List.of();
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+        List<Intersection> intersections = null;
+        for (Intersectable geometry : geometries) {
+            List<Intersection> geometryIntersections = geometry.calculateIntersectionsHelper(ray);
+            if (geometryIntersections != null) {
+                if (intersections == null) {
+                    intersections = new LinkedList<>();
+                }
+                intersections.addAll(geometryIntersections);
+            }
+        }
+        return intersections;
     }
+
 }

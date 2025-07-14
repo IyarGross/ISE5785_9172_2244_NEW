@@ -1,55 +1,93 @@
 package geometries;
-import java.util.List;
-import java.util.ArrayList;
 import primitives.*;
+import static primitives.Util.isZero;
+
+import java.util.List;
 
 /**
- * plane projects a plane in 3d
+ * Class Plane is the basic class representing a plane in a Cartesian
+ * 3-Dimensional coordinate system.
+ * @author Jeshurun and Binyamin
  */
 public class Plane extends Geometry {
-    protected final Point p0;
-    protected final Vector normal;
+    /**
+     * The point on the plane
+     */
+    private final Point q0;
+    /**
+     * The normal to the plane
+     */
+    private final Vector normal;
 
+    /**
+     * constructor creates the plane
+     *
+     * @param q0     the point on the plane
+     * @param normal the normal to the plane
+     */
+    public Plane(Point q0, Vector normal) {
+        this.q0 = q0;
+        this.normal = normal.normalize();
+    }
+
+    /**
+     * constructor creates the plane
+     *
+     * @param p1 the first point on the plane
+     * @param p2 the second point on the plane
+     * @param p3 the third point on the plane
+     */
     public Plane(Point p1, Point p2, Point p3) {
-        Vector v1 = p2.subtract(p1); // two new vectors
-        Vector v2 = p3.subtract(p2); // two new vectors ;
+        this.q0 = p1;
+        // Calculate the normal using the cross product of two vectors on the plane
+        // the points should not be on the same line
+        Vector v1 = p2.subtract(p1);
+        Vector v2 = p3.subtract(p1);
         this.normal = v1.crossProduct(v2).normalize();
-        this.p0 = p1;
     }
 
     /**
-     * @param normal
-     * @param p0
+     * normal getter
+     *
+     * @return the normal to the geometry
      */
-    public Plane(Vector normal, Point p0) {
-        this.normal = normal;
-        this.p0 = p0;
+    public Vector getNormal() {
+        return normal;
     }
 
-    /**
-     * @param point
-     * @return normal
-     */
     @Override
     public Vector getNormal(Point point) {
-        return normal;
+        return getNormal();
     }
-
 
     @Override
-    public List<Point> findIntsersections(Ray ray) {
-        if(p0.equals(ray.getP0())) return null;
-        Vector n = getNormal();
-        double nv =  ray.getDir().dotProduct(getNormal());
-        if (Util.isZero(nv)) return null;//the ray parallel or on the plane
-        double t= Util.alignZero((p0.subtract(ray.getP0() ).dotProduct(getNormal()))/nv) ;
-        if (t<=0) return null;//the ray points on the other direction
-        return  new ArrayList() {{add(ray.getPoing(t));}};
-    }
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+        Vector rayDir = ray.getDirection();
+        Point rayP0 = ray.getHead();
 
-    private Vector getNormal() {
-        return normal;
-    }
+        double denominator = normal.dotProduct(rayDir);
 
+        if (isZero(denominator)) {
+            // Ray is parallel to the plane
+            return null;
+        }
+
+        if (ray.getHead().equals(q0) ||
+                isZero(normal.dotProduct(ray.getHead().subtract(q0)))) {
+            // Ray starts on the plane or lies in it
+            return null;
+        }
+
+
+        // 3. Calculate t
+        double t = normal.dotProduct(q0.subtract(rayP0)) / denominator;
+
+        // 4. Intersection behind ray start or on the plane
+        if (t <= 0) {
+            return null;
+        }
+
+        Point p = ray.getPoint(t);
+        return List.of(new Intersection(this, p));
+    }
 }
-

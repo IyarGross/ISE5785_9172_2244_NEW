@@ -1,53 +1,119 @@
 package primitives;
 
-import java.util.Objects;
+import geometries.Intersectable.Intersection;
+
+import java.util.List;
+
+import static primitives.Util.isZero;
 
 /**
- * Ray class represents a ray (=vector that starts from a specific point) in 3D Cartesian coordinates
+ * Class Ray is the basic class representing a ray of Euclidean geometry in Cartesian 3-Dimensional coordinate system.
+ * All the points from the head of the ray in the line in the direction of the vector.
+ * @author Rachel and Tehila
  */
 public class Ray {
-    final private Point point;
-    final private Vector dir;
+    /** a point that represents the head of the ray */
+    private final Point head;
+    /** a normalized vector that represents the direction of the ray */
+    private final Vector direction;
+
     /**
-     * Ray construction is made from a start point and a direction vector
-     * The normalized direction vector is being saved
-     * @param point starting point
-     * @param dir direction of the ray
+     * a constructor to initialize a ray with a point and a vector.
+     * normalizes the vector if it isn't already a normal.
+     * @param head the point that is the head of the ray
+     * @param direction a vector representing the direction of the ray. (doesn't need to be normalized)
      */
-    public Ray(Point point, Vector dir) {
-        this.point = point;
-        this.dir = dir.normalize();
+    public Ray(Point head, Vector direction) {
+        this.head = head;
+        this.direction = direction.normalize();
+    }
+
+    /**
+     * getter function for ray's direction vector
+     * @return the vector representing the ray's direction
+     */
+    public Vector getDirection() {
+        return direction;
+    }
+
+    /**
+     * getter function for ray's head
+     * @return the point representing the ray's head
+     */
+    public Point getHead() {
+        return head;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        return (obj instanceof Ray other)
+                && this.head.equals(other.head)
+                && this.direction.equals(other.direction);
     }
 
     @Override
     public String toString() {
-        return null;
-    }
-
-    @Override
-    public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Ray ray)) return false;
-
-        return Objects.equals(point, ray.point) && dir.equals(ray.dir);
+        return "Ray{" +
+                "head=" + head +
+                ", direction=" + direction +
+                '}';
     }
 
     /**
-     * Gets the starting point
-     * @return starting point of the ray
+     * calculates the point on the ray that is a distance of t from the head of the ray in its direction
+     * @param t the distance from the head of the ray to the desired point
+     * @return a point on the ray that is a distance of t from the head of the ray
      */
-    final public Point getP0() {
-        return point;
+    public Point getPoint(double t) {
+        if(isZero(t)) {
+            return head;
+        } else {
+            return head.add(direction.scale(t));
+        }
     }
-    final public Point getPoint(double t) {
-        if (t<0) throw  (new IllegalArgumentException("getPoint must get a non negative value "));
-        return dir.scale(t).add((Vector) point);
-    }
+
     /**
-     * Gets the normalized direction vector
-     * @return normalized direction vector of the ray
+     * receives a list of points and returns the closest point to the head of the ray
+     * @param points the list of points
+     * @return the closest point to the head of the ray on the list
      */
-    final public Vector getDir() {
-        return dir;
+    public Point findClosestPoint(List<Point> points) {
+        if (points == null || points.isEmpty())
+            return null;
+
+        Intersection closest = findClosestIntersection(
+                points.stream()
+                        .map(p -> new Intersection(null, p))
+                        .toList()
+        );
+
+        return closest == null ? null : closest.point;
+    }
+
+
+    /**
+     * receives a list of GeoPoints and returns the closest GeoPoint to the head of the ray.
+     * @param intersectionPoints the list of GeoPoints
+     * @return the closest point to the head of the ray on the list
+     */
+    public Intersection findClosestIntersection(List<Intersection> intersectionPoints) {
+        if (intersectionPoints == null || intersectionPoints.isEmpty()) {
+            return null;
+        }
+
+        Intersection closest = intersectionPoints.getFirst(); // the closest point to the head
+        double closestDistance = closest.point.distance(head); // the distance between the head and the closest point
+        double distance; //a temporary variable of the distance between the point that is checked and the head
+
+        for(Intersection intersectionPoint : intersectionPoints) { // go through all of the points and find the closest one
+            distance = intersectionPoint.point.distance(head);
+            if(distance < closestDistance) {
+                closest = intersectionPoint;
+                closestDistance = distance;
+            }
+        }
+
+        return closest;
     }
 }

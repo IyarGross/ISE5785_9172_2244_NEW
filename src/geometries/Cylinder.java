@@ -1,56 +1,65 @@
+//cylinder.java
 package geometries;
 
-import primitives.Ray;
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
-
-import static primitives.Util.isZero;
+import primitives.Util;
+import java.util.List;
 
 /**
- * Finite tube delimited by two planes
+ * Represents a cylinder in 3D space, extending from a given axis with a certain radius and height.
+ * Inherits from the Tube class.
  */
 public class Cylinder extends Tube{
 
-    /**
-     * height of cylinder
-     */
-    final private double height;
+    private final double height; // The height of the cylinder
 
     /**
-     * cylinder constructor based on a radius , ray (direction), and a height
-     * @param axisRay ray originating from base of cylinder
-     * @param radius radius of cylinder
-     * @param height height of cylinder
-     * @throws IllegalArgumentException <p>if height sent as parameter is not a positive value</p>
+     * Constructs a cylinder with the given radius, axis, and height.
+     * @param radius The radius of the cylinder.
+     * @param axis The axis of the cylinder.
+     * @param height The height of the cylinder.
      */
-    public Cylinder(Ray axisRay, double radius, double height) {
-        super(radius, axisRay);
-        if(height<= 0)
-            throw new IllegalArgumentException("height must be positive value");
+    public Cylinder(double radius, Ray axis, double height) {
+        super(radius,axis);
         this.height=height;
     }
 
     /**
-     /**
-     * implementation {@link Geometry#getNormal(Point)}
+     * calculates the normal to the cylinder in point p
      *
-     * @param point point to calculate normal from/to
-     * @return normal
+     * @param point the point that the normal is going throw
+     * @return the normal to the cylinder in point p
      */
     @Override
     public Vector getNormal(Point point) {
-        Vector direction = _axisRay.getDir();
-        Point P0 = _axisRay.getP0();
+        Point p0 = axis.getPoint(0);
+        Vector dir = this.axis.getDirection();
+        Vector dirP1 = dir.scale(height);
 
-        //given point is on base of cylinder
-        if(point.equals(P0)||isZero(point.subtract(P0).dotProduct(direction)))
-            return direction.normalize();
+        //  If p0 is the head of the axis
+        if (point.equals(p0))
+            return dir.scale(-1);
 
-        // given point is on top base of the cylinder
-        if (point.equals(P0.add(direction.scale(height)))||isZero(point.subtract(P0.add(direction.scale(height))).dotProduct(direction)))
-            return direction.normalize();
+        // If p1 is the end of the axis
+        if (point.equals(p0.add(dirP1)))
+            return dir;
 
-        // given point is on the circumference of cylinder
+        // If the point is on the top or bottom surface of the cylinder
+        if (p0.subtract(point).dotProduct(dir) == 0)
+            return dir.scale(-1);
+
+        if (p0.add(dirP1).subtract(point).dotProduct(dir) == 0)
+            return dir;
+
+        // Otherwise, call the superclass method
         return super.getNormal(point);
+    }
+
+    @Override
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+        return null;
+
     }
 }

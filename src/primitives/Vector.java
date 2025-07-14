@@ -1,93 +1,132 @@
+//vector.java
 package primitives;
-import static java.lang.Math.sqrt;
+
 /**
- * Vector construction by three points in the 3D Cartesian coordinate
- *
+ * This class will serve most primitive classes by representing a vector
  */
-public class Vector extends Point{
+public class Vector extends Point {
+    // Unit vectors in X, Y, and Z directions
+    public static final Vector AXIS_X = new Vector(1, 0, 0);
+    public static final Vector AXIS_Y = new Vector(0, 1, 0);
+    public static final Vector AXIS_Z = new Vector(0, 0, 1);
     /**
-     * Vector construction by three points in the 3D Cartesian coordinate
-     * @param x x coordinate
-     * @param y y coordinate
-     * @param z z coordinate
+     * Constructor to initialize vector based object with its three number values
+     *
+     * @param x first number value
+     * @param y second number value
+     * @param z third number value
      */
     public Vector(double x, double y, double z) {
-        super(x,y,z);
-        if (xyz.equals(Double3.ZERO)) throw new IllegalArgumentException("Zero Vector can not be accepted");
+        super(x, y, z);
+        //Vector temp = new Vector(Double3.ZERO);
+        if (xyz.equals(Double3.ZERO))
+            throw new IllegalArgumentException("Vector can't be zero");
     }
 
     /**
-     * Vector constructions by the Double3 constructor
-     * @param xyz point of the end of the vector while the start is at zero point
+     * Constructor to initialize vector based object with a point
+     *
+     * @param xyz the point for the initialization
      */
     public Vector(Double3 xyz) {
         super(xyz);
-        if (xyz.equals(Double3.ZERO)) throw new IllegalArgumentException("Zero Vector can not be tolerate");
+        if (this.xyz.equals(Double3.ZERO))
+            throw new IllegalArgumentException("Vector can't be zero");
     }
+
     /**
-     * Vector addition
-     * @param v vector to add
-     * @return new vector of sum of vectors
-     */
-    final public Vector add(Vector v)
-    {
-        return new Vector(this.xyz.add(v.xyz));
-    }
-    /**
+     * calculate the length Squared of ש vector
      *
-     * @param m multiplier
-     * @return new scaled vector
+     * @return result the calculation of the length Squared
      */
-    final public Vector scale (double m)
-    {
-        return new Vector(this.xyz.scale(m));
-    }
-    /**
-     * Calculates dot product of two vectors
-     * @param v vector to multiply with
-     * @return the dot product of two vectors
-     */
-    final public double dotProduct (Vector v){
-        return this.xyz.d1()*v.xyz.d1()+this.xyz.d2() * v.xyz.d2()+this.xyz.d3() *v.xyz.d3();
+    public double lengthSquared() {
+        return xyz.d1 * xyz.d1 + xyz.d2 * xyz.d2 + xyz.d3 * xyz.d3;
+
     }
 
     /**
-     * Calculates cross product of two vectors
-     * @param v vector to multiply with
-     * @return the cross product of two vectors
+     * calculate the length of the vector
+     *
+     * @return result the calculation of the length
      */
-    final public Vector crossProduct (Vector v) {
-        return new Vector(this.xyz.d2()*v.xyz.d3() - this.xyz.d3()*v.xyz.d2(),this.xyz.d3()*v.xyz.d1()-this.xyz.d1()*v.xyz.d3(),this.xyz.d1()*v.xyz.d2()-this.xyz.d2()*v.xyz.d1());
-        //calculate the cross product by this formula
-    }
-    /**
-     * Calculates the squared length of the vector
-     * @return squared length of the vector
-     */
-    final  public double lengthSquared (){
-        return this.xyz.d1()*this.xyz.d1()+ this.xyz.d3()*this.xyz.d3()+this.xyz.d2()*this.xyz.d2();
-    }
-    /**
-     * Calculates the length of the vector
-     * @return length of vector
-     */
-    final  public double length() {
-        return sqrt(lengthSquared());
+    public double length() {
+        return Math.sqrt(lengthSquared());
+
     }
 
     /**
-     * Calculates the normalization of the vector
-     * @return the normalized vector
+     * calculate the dot product of the two vectors
+     *
+     * @param v the second vector
+     * @return result the calculation of the dot product-int
      */
-    final public Vector normalize ()
-    {
-        return new Vector (this.xyz.reduce(this.length()));
+    public double dotProduct(Vector v) {
+        return xyz.d1 * v.xyz.d1 + xyz.d2 * v.xyz.d2 + xyz.d3 * v.xyz.d3;
+    }
+
+    /**
+     * calculate the cross product of the two vectors
+     *
+     * @param v the second vector
+     * @return A new vector perpendicular to the two existing vectors
+     */
+    public Vector crossProduct(Vector v) {
+        return new Vector(xyz.d2 * v.xyz.d3 - xyz.d3 * v.xyz.d2, xyz.d3 * v.xyz.d1 - xyz.d1 * v.xyz.d3, xyz.d1 * v.xyz.d2 - xyz.d2 * v.xyz.d1);
+    }
+
+    /**
+     * calculate the normalization of the vector
+     *
+     * @return the vector after normalization
+     */
+    public Vector normalize() {
+        return this.scale((1 / this.length()));
+    }
+
+    /**
+     * calculate the vector multiply the scalar
+     *
+     * @param scalar
+     * @return the vector multiply scalar
+     */
+    public Vector scale(double scalar) {
+        return new Vector(xyz.scale(scalar));
+    }
+
+    /**
+     * adds two vectors
+     *
+     * @param v the second vector
+     * @return the vectors sum
+     */
+    public Vector add(Vector v) {
+        if (this.equals(v.scale(-1)))
+            throw new IllegalArgumentException("You cant do vector+-itself");
+        return new Vector(xyz.add(v.xyz));
     }
 
     @Override
-    final public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Vector other)) return false;//if the type isnt vector
-        return super.equals((Point) obj);
+    public boolean equals(Object obj) {
+        if ((this == obj)) return true;
+        return ((obj instanceof Vector other)
+                && super.equals(other));
     }
+
+    @Override
+    public String toString() {
+        return "Vector{" +
+                "xyz=" + xyz +
+                "} " + super.toString();
+    }
+    /**
+     * checks if the current vector is parallel to the parameter vector
+     * @param v1 the vector that is checked
+     * @return true if the current vector is parallel to the parameter vector, false if it isn't
+     */
+    public Boolean isParallel(Vector v1) {
+        Vector n1 = normalize();
+        Vector n2 = v1.normalize();
+        return n1.equals(n2) || n1.equals(n2.scale(-1));
+    }
+
 }

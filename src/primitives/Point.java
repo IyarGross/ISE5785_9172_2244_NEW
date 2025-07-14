@@ -1,87 +1,91 @@
 package primitives;
-import static java.lang.Math.sqrt;
 
 /**
- * Point class represents a point at the 3D Cartesian coordinate
+ * Class Point is the basic class representing a point of Euclidean geometry in Cartesian
+ * 3-Dimensional coordinate system.
  */
 public class Point {
-    public static  Point ZERO= new Point(0,0,0);
+    /** a point that represents the center of the 3-Dimensional coordinate system */
+    public static final Point ZERO = new Point(Double3.ZERO);
+
+    /** a double3 representing the x, y, and z coordinates */
+    protected final Double3 xyz;
+
     /**
-     * Point will be represented by double3 type
-     */
-    final protected Double3 xyz;
-    /**
-     * Constructs of a point by 3D Cartesian coordinate
+     * Constructor to initialize a point with its three coordinates
      * @param x x coordinate
      * @param y y coordinate
      * @param z z coordinate
      */
     public Point(double x, double y, double z) {
-
-        this.xyz = new Double3(x,y,z);
+        xyz = new Double3(x, y, z);
     }
 
     /**
-     * Constructs of a Point by a Double3
-     * @param xyz the Double3 that will be the new point
+     * Constructor to initialize a point with its three coordinates from a double3
+     * @param xyz the three coordinates of the point
      */
-    Point(Double3 xyz) {
+    public Point(Double3 xyz) {
         this.xyz = xyz;
     }
 
     /**
-     * Subtracts a point from a point
-     * @param p point to be reduced
-     * @return Subtraction of a point from a point
+     * calculates the vector between the parameter point to the current point
+     * @param p1 the point the vector starts from
+     * @return a new vector between p1 and the current point
      */
-    final public Vector subtract(Point p) {
-        return new Vector(this.xyz.subtract(p.xyz));
+    public Vector subtract(Point p1) {
+        return new Vector(xyz.subtract(p1.xyz));
     }
 
     /**
-     * Adds Vector to a point
-     * @param v Vector
-     * @return new point
+     * calculates the new point received after adding the vector to the current point
+     * @param v1 the vector that is added to the point
+     * @return a new point
      */
-    public Point add(Vector v) {
-        return new Point(this.xyz.add(v.xyz));
+    public Point add(Vector v1) {
+        return new Point(xyz.add(v1.xyz));
     }
 
     /**
-     *
-     * @param p1
-     * point p xyz- point p1 xyz
-     * (p.x-p1.x)(p.x-p1.x)->(p.x-p1.x)^2
-     * (p.x-p1.x)^2+(p.y-p1.y)^2+(p.z-p1.z)^2
-     * @return
+     * a get method for the three coordinates of the point
+     * @return the three coordinates of the point
      */
-    final public double distanceSquared(Point p1) {
-        return (this.xyz.d1() - p1.xyz.d1())*(this.xyz.d1() - p1.xyz.d1())+(this.xyz.d2() - p1.xyz.d2())*(this.xyz.d2() - p1.xyz.d2())+(this.xyz.d3() - p1.xyz.d3())*(this.xyz.d3() - p1.xyz.d3());
+    public Double3 getXyz() {
+        return xyz;
     }
+
     /**
-     * Calculates the distance between two points
-     * @param p1 point to calculate distance with
-     * @return distance between two points
+     * calculates the squared distance between the current and parameter point
+     * @param p1 the other point
+     * @return the squared distance between the current point and parameter point
+     */
+    public double distanceSquared(Point p1) {
+        return (xyz.d1 - p1.xyz.d1) * (xyz.d1 - p1.xyz.d1) +
+                (xyz.d2 - p1.xyz.d2) * (xyz.d2 - p1.xyz.d2) +
+                (xyz.d3 - p1.xyz.d3) * (xyz.d3 - p1.xyz.d3);
+    }
+
+    /**
+     * calculates the squared distance between the current and parameter point
+     * @param p1 the other point
+     * @return the distance between the current point and parameter point
      */
     public double distance(Point p1) {
-        return sqrt(distanceSquared(p1));
+        return Math.sqrt(distanceSquared(p1));
     }
 
-    /**
-     *
-     * @param obj
-     * @return bool
-     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof Point)) {
-            return false;
-        }
-        return xyz.equals(((Point) obj).xyz);
+        return (obj instanceof Point other)
+                && this.xyz.equals(other.xyz);
     }
+
     @Override
     public String toString() {
-        return xyz.toString();
+        return "Point{" +
+                "xyz=" + xyz +
+                '}';
     }
 }

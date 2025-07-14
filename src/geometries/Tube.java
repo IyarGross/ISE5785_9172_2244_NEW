@@ -6,62 +6,47 @@ import primitives.Vector;
 
 import java.util.List;
 
-import static primitives.Util.isZero;
-
+/**
+ * Class Tube is the class representing a Tube(infinity cylinder) in Cartesian
+ * 3-Dimensional coordinate system.
+ * @author Jeshurun and Binyamin
+ */
 public class Tube extends RadialGeometry {
 
+    /**The axis of the Tube*/
+    protected final Ray axis;
 
-    protected final double _radius;
     /**
-     * radius of tube
+     * constructor with parameters
+     * @param radius the radius of the tube
+     * @param axis the axis of the tube
      */
-    protected final Ray _axisRay;
-    /**
-     * ray originating from base of tube
-     */
-    /**
-     * @param radius
-     * @param axisRay
-     */
-    public Tube(double radius, Ray axisRay) {
+    public Tube(double radius, Ray axis){
         super(radius);
-        _axisRay = axisRay;
-        _radius = radius;
+        this.axis = axis;
     }
-    /**
-     * tube constructor based on a radius and a ray from base of tube
-     * @param axisRay ray originating from base of tube
-     * @throws IllegalArgumentException <p>if radius sent as parameter is not a positive value</p>
-     */
 
-    /**
-     * @param point
-     * @return normal
-     */
+    @Override
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+        // The tube is infinite, so we need to find the intersection of the ray with the axis
+        // and then check if the point is within the radius of the tube
+        return null;
+    }
     @Override
     public Vector getNormal(Point point) {
-        Vector direction = _axisRay.getDir();
-        Point P0 = _axisRay.getP0();
-
-        // find distance of point from origin and scale direction
-        // to get the point on tube parallel to given point
-        double t = (direction.dotProduct(point.subtract(P0)));
-        Point O = P0.add(direction.scale(t));
-
-        //given point is on axis ray
-        if (point.equals(O))
-            throw new IllegalArgumentException("point cannot be on the axis ray");
-
-        // point is against tube origin point
-        if (isZero(t))
-            return point.subtract(P0).normalize();
-            // any other point
-        else
-            return point.subtract(O).normalize();
-    }
-
-    @Override
-    public List<Point> findIntsersections(Ray ray) {
-        return List.of();
+        // The normal of a tube is the vector from the axis to the point on the tube
+        // The projection of the point on the axis
+        Vector u = point.subtract(axis.getHead());
+        double t = axis.getDirection().dotProduct(u);
+        if (t == 0) {
+            // The point is on the axis
+            return u.normalize();
+        }
+        // The projection of the point on the axis
+        Point projection = axis. getHead().add(axis.getDirection().scale(t));
+        // The vector from the projection to the point
+        Vector normal = point.subtract(projection);
+        // The normal is the vector from the projection to the point
+        return normal.normalize();
     }
 }
