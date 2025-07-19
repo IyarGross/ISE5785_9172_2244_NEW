@@ -18,6 +18,8 @@ public class Ray {
      */
     private final Vector direction;
 
+    private final double DELTA = 0.1;
+
     /**
      * creates a new ray with given starting point and direction
      * @param head the starting point
@@ -26,6 +28,25 @@ public class Ray {
     public Ray(Point head, Vector direction) {
         this.head = head;
         this.direction = direction.normalize();
+    }
+    /**
+     * constructor creates the ray
+     * @param p0 the beginning of the ray
+     * @param dir the direction of the ray
+     * @param normal the normal vector to the surface
+     */
+    public Ray(Point p0, Vector dir, Vector normal) {
+        this.direction= dir.normalize();
+        double nv = normal.dotProduct(dir);
+        if (Util.isZero(nv)) {
+            this.head = p0;
+        }
+        else if (nv > 0) {
+            this.head = p0.add(normal.scale(DELTA));
+        }
+        else {
+            this.head = p0.subtract(normal.scale(DELTA));
+        }
     }
 
     /**
@@ -63,30 +84,24 @@ public class Ray {
      * @return the closest point or null if list is empty
      */
     public Point findClosestPoint(List<Point> points) {
-        return (points == null || points.isEmpty()) ? null
-                : findClosestIntersection(points.stream()
-                .map(p -> new Intersection(null, p))
-                .toList()).point;
+        return points == null
+                ? null
+                : findClosestIntersection(
+                points.stream().map(
+                        p -> new Intersection(null, p)).toList()).point;
     }
 
-    /**
-     * finds the closest intersection to the ray head
-     * @param intersections list of intersections to check
-     * @return the closest intersection or null if list is empty
-     */
     public Intersection findClosestIntersection(List<Intersection> intersections) {
         if (intersections == null || intersections.isEmpty()) {
-            return null;
+            return new Intersection(null, null);
         }
-
         Intersection closestIntersection = intersections.getFirst();
-        double minDistance = closestIntersection.point.distance(this.head);
-
+        double minDistance = head.distance(closestIntersection.point);
         for (Intersection intersection : intersections) {
-            double distance = intersection.point.distance(this.head);
+            double distance = head.distance(intersection.point);
             if (distance < minDistance) {
-                minDistance = distance;
                 closestIntersection = intersection;
+                minDistance = distance;
             }
         }
         return closestIntersection;

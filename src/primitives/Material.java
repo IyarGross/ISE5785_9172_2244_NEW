@@ -24,6 +24,11 @@ public class Material {
      * shininess factor for specular reflection
      */
     public int nSh = 0;
+    /*** The transparency coefficient*/
+    public Double3 kT = Double3.ZERO;
+    /*** The reflection coefficient*/
+    public Double3 kR = Double3.ZERO;
+
 
     /**
      * sets the ambient reflection coefficient using a double3
@@ -84,7 +89,22 @@ public class Material {
         this.kD = new Double3(kD);
         return this;
     }
-
+    public Material setKT(Double3 kT) {
+        this.kT = kT;
+        return this;
+    }
+    public Material setKT(double kT) {
+        this.kT = new Double3(kT);
+        return this;
+    }
+    public Material setKR(Double3 kR) {
+        this.kR = kR;
+        return this;
+    }
+    public Material setKR(double kR) {
+        this.kR = new Double3(kR);
+        return this;
+    }
     /**
      * sets the shininess factor for specular reflections
      * @param nSh shininess coefficient
